@@ -12,23 +12,10 @@ limitations under the License.
 */
 package v1
 
-type TenantCreteIn struct {
-	Title  string        `json:"title"`
-	Remark string        `json:"Remark"`
-	Admin  *UserCreateIn `json:"admin"`
-}
-type TenantCreateOut struct {
-	ID     int          `json:"tenant_id"`
-	Title  string       `json:"title"`
-	Remark string       `json:"remark"`
-	Admin  UserCreateIn `json:"admin"`
+type Token struct {
+	Token string `json:"token"`
 }
 
-type UserCreateIn struct {
-	TenantID int    `json:"tenant_id" `
-	UserName string `json:"username"`
-	Password string `json:"password"`
-	NickName string `json:"nick_name"`
-	Avatar   string `json:"avatar"`
-	Email    string `json:"email"`
+type TokenValidIn struct {
+	EntityToken string `json:"entity_token"`
 }

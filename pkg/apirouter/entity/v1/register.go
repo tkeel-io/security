@@ -15,29 +15,34 @@ package v1
 import (
 	"github.com/emicklei/go-restful"
 	restfulspec "github.com/emicklei/go-restful-openapi"
+	"github.com/tkeel-io/security/pkg/apiserver/filters"
 	"github.com/tkeel-io/security/pkg/constants"
-	"github.com/tkeel-io/security/pkg/errcode"
-	"net/http"
 )
 
 func AddToRestContainer(c *restful.Container) error {
+
 	webservice := &restful.WebService{}
-	webservice.Consumes(restful.MIME_JSON).
-		Produces(restful.MIME_JSON)
+	webservice.Path("/entity").
+		Consumes(restful.MIME_JSON).
+		Produces(restful.MIME_JSON).
+		Filter(filters.Auth())
 
-	handler := newOpenApiHandler()
+	handler := newEntityHandler()
 
-	webservice.Route(webservice.GET("identify").
-		To(handler.Identify).
-		Doc("identify for plugin register ").
-		Returns(http.StatusOK, errcode.ErrMsgOK, identifyResponse{}).
-		Metadata(restfulspec.KeyOpenAPITags, []string{constants.APITagPluginRequired}))
+	webservice.Route(webservice.GET("{entity_type}/{entity_id}/token").
+		To(handler.Token).
+		Doc("get a entity token").
+		Param(webservice.PathParameter("entity_type", "EntityType")).
+		Param(webservice.PathParameter("entity_id", "Entity's ID")).
+		Param(webservice.QueryParameter("expires_in", "invalid period( seconds )")).
+		Metadata(restfulspec.KeyOpenAPITags, []string{constants.APITagEntity}))
 
-	webservice.Route(webservice.GET("status").
-		To(handler.Status).
-		Doc(" status for plugin register ").
-		Returns(http.StatusOK, errcode.ErrMsgOK, status{}).
-		Metadata(restfulspec.KeyOpenAPITags, []string{constants.APITagPluginRequired}))
+	webservice.Route(webservice.POST("token/valid").
+		To(handler.TokenValid).
+		Doc("valid a entity token").
+		Reads(TokenValidIn{}).
+		Metadata(restfulspec.KeyOpenAPITags, []string{constants.APITagEntity}))
+
 	c.Add(webservice)
 	return nil
 }

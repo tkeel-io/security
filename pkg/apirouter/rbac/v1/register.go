@@ -24,7 +24,6 @@ import (
 )
 
 func AddToRestContainer(c *restful.Container) error {
-
 	webservice := &restful.WebService{}
 	webservice.Path("/rbac").
 		Consumes(restful.MIME_JSON).
@@ -39,49 +38,65 @@ func AddToRestContainer(c *restful.Container) error {
 		Param(webservice.PathParameter("tenant_id", "tenant's ID")).
 		Reads(AddPermissionIn{}).
 		Returns(http.StatusOK, errcode.ErrMsgOK, nil).
-		Metadata(restfulspec.KeyOpenAPITags, []string{constants.ApiTagRBAC}))
+		Metadata(restfulspec.KeyOpenAPITags, []string{constants.APITagRBAC}))
 
 	webservice.Route(webservice.GET("/{tenant_id}/roles").
 		To(handler.RolesInDomain).
 		Doc("Get role list in tenant").
 		Param(webservice.PathParameter("tenant_id", "tenant's ID")).
-		Metadata(restfulspec.KeyOpenAPITags, []string{constants.ApiTagRBAC}))
+		Metadata(restfulspec.KeyOpenAPITags, []string{constants.APITagRBAC}))
 
 	webservice.Route(webservice.DELETE("/{tenant_id}/roles/{role}").
 		To(handler.DeleteRoleInDomain).
 		Doc("delete a role in tenant").
 		Param(webservice.PathParameter("tenant_id", "tenant's ID")).
 		Param(webservice.PathParameter("role", "role'ID")).
-		Metadata(restfulspec.KeyOpenAPITags, []string{constants.ApiTagRBAC}))
+		Metadata(restfulspec.KeyOpenAPITags, []string{constants.APITagRBAC}))
 
 	webservice.Route(webservice.POST("/{tenant_id}/{role}/permissions").
 		To(handler.AddPermissionInRole).
-		Doc("delete a role in tenant").
+		Doc("add permission for role").
 		Param(webservice.PathParameter("tenant_id", "tenant's ID")).
 		Param(webservice.PathParameter("role", "role'ID")).
 		Reads(AddPermissionIn{}).
-		Metadata(restfulspec.KeyOpenAPITags, []string{constants.ApiTagRBAC}))
+		Metadata(restfulspec.KeyOpenAPITags, []string{constants.APITagRBAC}))
 
-	webservice.Route(webservice.GET("/{tenant_id}/users/{user}/permissions").
-		To(handler.PermissionsInUser).
-		Doc("delete a role in tenant").
-		Param(webservice.PathParameter("tenant_id", "tenant's ID")).
-		Param(webservice.PathParameter("user", "user'ID")).
-		Metadata(restfulspec.KeyOpenAPITags, []string{constants.ApiTagRBAC}))
-
-	webservice.Route(webservice.DELETE("/{tenant_id}/{role}/permissions/{permission_id}").
+	webservice.Route(webservice.DELETE("/{tenant_id}/{role}/permissions").
 		To(handler.DeletePermissionInRole).
-		Doc("delete a role in tenant").
+		Doc("delete a permission for role ").
 		Param(webservice.PathParameter("tenant_id", "tenant's ID")).
-		Param(webservice.PathParameter("permission_id", "permissions'ID")).
 		Param(webservice.PathParameter("role", "role'ID")).
-		Metadata(restfulspec.KeyOpenAPITags, []string{constants.ApiTagRBAC}))
+		Param(webservice.QueryParameter("permission_object", "permission object")).
+		Param(webservice.QueryParameter("permission_action", "permission action")).
+		Metadata(restfulspec.KeyOpenAPITags, []string{constants.APITagRBAC}))
+
+	webservice.Route(webservice.POST("/{tenant_id}/users/roles").
+		To(handler.AddRoleToUser).
+		Doc("add roles for users").
+		Param(webservice.PathParameter("tenant_id", "tenant's ID")).
+		Reads(AddRoleInDomainIn{}).
+		Metadata(restfulspec.KeyOpenAPITags, []string{constants.APITagRBAC}))
+
+	webservice.Route(webservice.DELETE("/{tenant_id}/users/{user_id}/roles/{role}").
+		To(handler.DeleteRoleOnUser).
+		Doc("delete a role for user").
+		Param(webservice.PathParameter("tenant_id", "tenant's ID")).
+		Param(webservice.PathParameter("user_id", "user's ID")).
+		Param(webservice.PathParameter("role", "role")).
+		Metadata(restfulspec.KeyOpenAPITags, []string{constants.APITagRBAC}))
+
+	webservice.Route(webservice.GET("/{tenant_id}/users/{user_id}/permissions").
+		To(handler.UserPermissions).
+		Doc("get user permissions ").
+		Param(webservice.PathParameter("tenant_id", "tenant's ID")).
+		Param(webservice.PathParameter("user_id", "user's ID")).
+		Metadata(restfulspec.KeyOpenAPITags, []string{constants.APITagRBAC}))
 
 	webservice.Route(webservice.POST("/permission/check").
 		To(handler.PermissionCheck).
 		Doc("delete a role in tenant").
 		Reads(PermissionCheck{}).
-		Metadata(restfulspec.KeyOpenAPITags, []string{constants.ApiTagRBAC}))
+		Metadata(restfulspec.KeyOpenAPITags, []string{constants.APITagRBAC}))
 
 	c.Add(webservice)
 	return nil

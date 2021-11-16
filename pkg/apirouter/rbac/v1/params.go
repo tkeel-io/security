@@ -39,3 +39,19 @@ type PermissionCheck struct {
 type PermissionCheckResult struct {
 	Allowed bool `json:"allowed"`
 }
+
+type AddRoleForUserIn struct {
+	UserIDS []string `json:"user_ids"`
+	Roles   []string `json:"roles"`
+}
+
+type DelRoleForUserIn struct {
+	UserIDS []string `json:"user_ids"`
+	Roles   []string `json:"roles"`
+}
+
+type UserPermission struct {
+	Role             string `json:"role"`
+	PermissionObject string `json:"permission_object"`
+	PermissionAction string `json:"permission_action"`
+}

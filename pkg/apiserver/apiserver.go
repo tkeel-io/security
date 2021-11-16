@@ -16,6 +16,7 @@ import (
 	"context"
 	"net/http"
 
+	entityrouter "github.com/tkeel-io/security/pkg/apirouter/entity/v1"
 	oauthrouter "github.com/tkeel-io/security/pkg/apirouter/oauth"
 	openapirouter "github.com/tkeel-io/security/pkg/apirouter/openapi/v1"
 	rbacrouter "github.com/tkeel-io/security/pkg/apirouter/rbac/v1"
@@ -40,7 +41,6 @@ type APIServer struct {
 
 func (s *APIServer) Run(ctx context.Context) (err error) {
 	dao.SetUp()
-
 	shutdownCtx, cancel := context.WithCancel(context.Background())
 	defer cancel()
 
@@ -61,7 +61,6 @@ func (s *APIServer) Run(ctx context.Context) (err error) {
 }
 
 func (s *APIServer) PrepareRun(stopCh <-chan struct{}) error {
-
 	s.restContainer = restful.NewContainer()
 	s.restContainer.Router(restful.CurlyRouter{})
 
@@ -81,6 +80,7 @@ func (s *APIServer) installApis() {
 	must(openapirouter.AddToRestContainer(s.restContainer))
 	must(rbacrouter.AddToRestContainer(s.restContainer))
 	must(tenantrouter.AddToRestContainer(s.restContainer))
+	must(entityrouter.AddToRestContainer(s.restContainer))
 }
 
 func must(err error) {

@@ -82,7 +82,7 @@ func (u *User) Delete() error {
 	return nil
 }
 
-// todo fix page
+// todo fix page.
 func (u *User) QueryByCondition(condition map[string]interface{}) (users []*User, err error) {
 	if condition == nil {
 		return nil, errors.New("query user condition is empty")

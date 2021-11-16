@@ -46,8 +46,7 @@ func init() {
 
 func main() {
 	flag.Parse()
-	swaggerSpec := generateSwaggerJson()
-
+	swaggerSpec := generateSwaggerJSON()
 	err := validateSpec(swaggerSpec)
 	if err != nil {
 		_log.Warn("Swagger specification has errors ", err)
@@ -55,24 +54,19 @@ func main() {
 }
 
 func validateSpec(apiSpec []byte) error {
-
 	swaggerDoc, err := loads.Analyzed(apiSpec, "")
 	if err != nil {
-		return err
+		return fmt.Errorf("swagger dpc analyzed err : %w", err)
 	}
-
 	// Attempts to report about all errors
 	validate.SetContinueOnErrors(true)
-
 	v := validate.NewSpecValidator(swaggerDoc.Schema(), strfmt.Default)
 	result, _ := v.Validate(swaggerDoc)
-
 	if result.HasWarnings() {
-		log.Printf("See warnings below:\n")
+		_log.Info("see warnings below:\n")
 		for _, desc := range result.Warnings {
-			log.Printf("- WARNING: %s\n", desc.Error())
+			_log.Warnf("- WARNING: %s\n", desc.Error())
 		}
-
 	}
 	if result.HasErrors() {
 		str := fmt.Sprintf("The swagger spec is invalid against swagger specification %s.\nSee errors below:\n", swaggerDoc.Version())
@@ -86,15 +80,12 @@ func validateSpec(apiSpec []byte) error {
 	return nil
 }
 
-func generateSwaggerJson() []byte {
-
+func generateSwaggerJSON() []byte {
 	container := restful.NewContainer()
-
 	(oauthrouter.AddToRestContainer(container))
 	(openapirouter.AddToRestContainer(container))
 	(rbacrouter.AddToRestContainer(container))
 	(tenantrouter.AddToRestContainer(container))
-
 	config := restfulspec.Config{
 		WebServices:                   container.RegisteredWebServices(),
 		PostBuildSwaggerObjectHandler: enrichSwaggerObject}
@@ -112,7 +103,6 @@ func generateSwaggerJson() []byte {
 		log.Fatal(err)
 	}
 	log.Printf("successfully written to %s", output)
-
 	return data
 }
 
@@ -121,7 +111,7 @@ func enrichSwaggerObject(swo *spec.Swagger) {
 		InfoProps: spec.InfoProps{
 			Title:       "Auth",
 			Description: "Auth OpenAPI",
-			Version:     version.Get().GitVersion,
+			Version:     version.Get().AppVersion,
 			Contact: &spec.ContactInfo{
 				ContactInfoProps: spec.ContactInfoProps{
 					Name:  "tKeel",

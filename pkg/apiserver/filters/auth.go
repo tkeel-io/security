@@ -26,7 +26,7 @@ func Auth() restful.FilterFunction {
 		token, err := operator.ValidationBearerToken(req.Request)
 		if err != nil {
 			_log.Error(err)
-			response.SrvErrWithRest(resp, errcode.ErrInvalidToken, nil)
+			response.SrvErrWithRest(resp, errcode.ErrInvalidAccessRequest, nil)
 			return
 		}
 

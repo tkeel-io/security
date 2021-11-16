@@ -35,7 +35,7 @@ func AddToRestContainer(c *restful.Container) error {
 		Doc(" Create a tenant").
 		Reads(TenantCreteIn{}).
 		Returns(http.StatusOK, errcode.ErrMsgOK, TenantCreateOut{}).
-		Metadata(restfulspec.KeyOpenAPITags, []string{constants.ApiTagTenant}))
+		Metadata(restfulspec.KeyOpenAPITags, []string{constants.APITagTenant}))
 
 	webservice.Route(webservice.GET("/").
 		To(handler.Query).
@@ -43,34 +43,34 @@ func AddToRestContainer(c *restful.Container) error {
 		Param(webservice.QueryParameter("tenant_id", "").Required(false)).
 		Param(webservice.QueryParameter("title", "").Required(false)).
 		Returns(http.StatusOK, errcode.ErrMsgOK, []*dao.Tenant{}).
-		Metadata(restfulspec.KeyOpenAPITags, []string{constants.ApiTagTenant}))
+		Metadata(restfulspec.KeyOpenAPITags, []string{constants.APITagTenant}))
 
 	webservice.Route(webservice.DELETE("/{tenant_id}").
 		To(handler.Delete).
 		Doc("delete a tenant").
 		Param(webservice.PathParameter("tenant_id", "tenant's ID").Required(true)).
 		Returns(http.StatusOK, errcode.ErrMsgOK, nil).
-		Metadata(restfulspec.KeyOpenAPITags, []string{constants.ApiTagTenant}))
+		Metadata(restfulspec.KeyOpenAPITags, []string{constants.APITagTenant}))
 
 	webservice.Route(webservice.POST("/users").
 		To(handler.UserCreate).
 		Doc("create a user").
 		Reads(UserCreateIn{}).
 		Returns(http.StatusOK, errcode.ErrMsgOK, dao.User{}).
-		Metadata(restfulspec.KeyOpenAPITags, []string{constants.ApiTagTenant}))
+		Metadata(restfulspec.KeyOpenAPITags, []string{constants.APITagTenant}))
 
 	webservice.Route(webservice.GET("/users").
 		To(handler.UserQuery).
 		Doc("get users").
 		Returns(http.StatusOK, errcode.ErrMsgOK, []dao.User{}).
-		Metadata(restfulspec.KeyOpenAPITags, []string{constants.ApiTagTenant}))
+		Metadata(restfulspec.KeyOpenAPITags, []string{constants.APITagTenant}))
 
 	webservice.Route(webservice.DELETE("/users/{user_id}").
 		To(handler.UserDelete).
 		Doc("delete a  users").
 		Param(webservice.PathParameter("user_id", "").Required(true)).
 		Returns(http.StatusOK, errcode.ErrMsgOK, nil).
-		Metadata(restfulspec.KeyOpenAPITags, []string{constants.ApiTagTenant}))
+		Metadata(restfulspec.KeyOpenAPITags, []string{constants.APITagTenant}))
 
 	c.Add(webservice)
 	return nil

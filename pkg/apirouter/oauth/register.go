@@ -13,6 +13,8 @@ limitations under the License.
 package oauth
 
 import (
+	restfulspec "github.com/emicklei/go-restful-openapi"
+	"github.com/tkeel-io/security/pkg/constants"
 	"github.com/tkeel-io/security/pkg/models/oauth"
 
 	"github.com/emicklei/go-restful"
@@ -25,18 +27,25 @@ func AddToRestContainer(c *restful.Container) error {
 		Consumes(restful.MIME_JSON).
 		Produces(restful.MIME_JSON)
 
-	oauth.OauthOperatorSetup()
+	oauth.OperatorSetup()
 	oauthOperator := oauth.GetOauthOperator()
 	handler := newOauthHandler(oauthOperator)
 
 	webservice.Route(webservice.GET("authorize").
-		To(handler.Authorize))
+		To(handler.Authorize).
+		Metadata(restfulspec.KeyOpenAPITags, []string{constants.APITagOauth}))
 
 	webservice.Route(webservice.GET("token").
-		To(handler.Token))
+		To(handler.Token).
+		Metadata(restfulspec.KeyOpenAPITags, []string{constants.APITagOauth}))
 
 	webservice.Route(webservice.GET("authenticate").
-		To(handler.Authenticate))
+		To(handler.Authenticate).
+		Metadata(restfulspec.KeyOpenAPITags, []string{constants.APITagOauth}))
+
+	webservice.Route(webservice.GET("on_code").
+		To(handler.OnCode).
+		Metadata(restfulspec.KeyOpenAPITags, []string{constants.APITagOauth}))
 	c.Add(webservice)
 	return nil
 }
