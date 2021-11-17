@@ -17,7 +17,7 @@ const (
 	CodeSuccess = 0
 	// CodeInternalServer.
 	CodeInternalServer = iota + 10000
-	CodeInvalidRequest
+	CodeInvalidAccessToken
 	CodeInvalidParam
 	CodeGenToken
 	CodeTokenInvalid
@@ -35,13 +35,13 @@ var (
 	// SuccessServe.
 	SuccessServe = NewError(CodeSuccess, ErrMsgOK)
 	// ErrInternalServer.
-	ErrInternalServer     = NewError(CodeInternalServer, "internal server error")
-	ErrInvalidRequest     = NewError(CodeInvalidRequest, "invalid request")
-	ErrInvalidParam       = NewError(CodeInvalidParam, "invalid param")
-	ErrInDatabase         = NewError(CodeDatabaseErr, "database err")
-	ErrInExistedResource  = NewError(CodeResourceExisted, "existed resource")
-	ErrGenToken           = NewError(CodeGenToken, "gen token error")
-	ErrInvalidToken       = NewError(CodeTokenInvalid, "invalid token")
-	ErrTokenTimeout       = NewError(CodeTokenTimeOut, "token timeout")
-	ErrServiceUnavailable = NewError(CodeServiceUnavailable, "service unavailable")
+	ErrInternalServer       = NewError(CodeInternalServer, "internal server error")
+	ErrInvalidAccessRequest = NewError(CodeInvalidAccessToken, "invalid access request")
+	ErrInvalidParam         = NewError(CodeInvalidParam, "invalid param")
+	ErrInDatabase           = NewError(CodeDatabaseErr, "database err")
+	ErrInExistedResource    = NewError(CodeResourceExisted, "existed resource")
+	ErrGenToken             = NewError(CodeGenToken, "gen token error")
+	ErrInvalidToken         = NewError(CodeTokenInvalid, "invalid token")
+	ErrTokenTimeout         = NewError(CodeTokenTimeOut, "token timeout")
+	ErrServiceUnavailable   = NewError(CodeServiceUnavailable, "service unavailable")
 )

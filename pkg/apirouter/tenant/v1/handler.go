@@ -13,6 +13,8 @@ limitations under the License.
 package v1
 
 import (
+	"fmt"
+	"github.com/tkeel-io/security/pkg/models/rbac"
 	"strconv"
 
 	"github.com/tkeel-io/security/pkg/apiserver/response"
@@ -39,7 +41,7 @@ func (h *tenantHandler) Create(req *restful.Request, resp *restful.Response) {
 	)
 	if err = req.ReadEntity(&in); err != nil {
 		_log.Error(err)
-		response.SrvErrWithRest(resp, errcode.ErrInvalidRequest, nil)
+		response.SrvErrWithRest(resp, errcode.ErrInvalidAccessRequest, nil)
 		return
 	}
 	tenant := &dao.Tenant{
@@ -60,6 +62,35 @@ func (h *tenantHandler) Create(req *restful.Request, resp *restful.Response) {
 		Title:  tenant.Title,
 		Remark: tenant.Remark,
 	}
+
+	if in.Admin != nil {
+		user := dao.User{
+			ID:       dao.GenUserID(tenant.ID),
+			UserName: in.Admin.UserName,
+			Password: in.Admin.Password,
+			Avatar:   in.Admin.Avatar,
+			Email:    in.Admin.Email,
+			NickName: in.Admin.NickName,
+		}
+		err = user.Create()
+		if err == nil {
+			out.Admin.UserName = user.UserName
+			gPolicy := &rbac.GroupingPolicy{
+				Subject: user.ID,
+				Role:    "admin",
+				Domain:  fmt.Sprintf("%d", tenant.ID),
+			}
+			policy := &rbac.Policy{
+				Role:   "admin",
+				Domain: fmt.Sprintf("%d", tenant.ID),
+				Object: "*",
+				Action: "*",
+			}
+			rbac.AddGroupingPolicy(gPolicy)
+			rbac.AddPolicy(policy)
+		}
+	}
+
 	response.SrvErrWithRest(resp, errcode.SuccessServe, out)
 }
 
@@ -70,7 +101,7 @@ func (h *tenantHandler) Delete(req *restful.Request, resp *restful.Response) {
 	)
 	tenantID, err := strconv.Atoi(req.PathParameter("tenant_id"))
 	if err != nil || tenantID == 0 {
-		response.SrvErrWithRest(resp, errcode.ErrInvalidRequest, nil)
+		response.SrvErrWithRest(resp, errcode.ErrInvalidAccessRequest, nil)
 		return
 	}
 	tenant = &dao.Tenant{
@@ -110,7 +141,7 @@ func (h *tenantHandler) UserCreate(req *restful.Request, resp *restful.Response)
 	)
 	if err = req.ReadEntity(&in); err != nil {
 		_log.Error(err)
-		response.SrvErrWithRest(resp, errcode.ErrInvalidRequest, nil)
+		response.SrvErrWithRest(resp, errcode.ErrInvalidAccessRequest, nil)
 		return
 	}
 	condition := make(map[string]interface{})
@@ -187,7 +218,7 @@ func (h *tenantHandler) UserDelete(req *restful.Request, resp *restful.Response)
 	)
 	userID := req.PathParameter("user_id")
 	if len(userID) == 0 {
-		response.SrvErrWithRest(resp, errcode.ErrInvalidRequest, nil)
+		response.SrvErrWithRest(resp, errcode.ErrInvalidAccessRequest, nil)
 		return
 	}
 	user = &dao.User{

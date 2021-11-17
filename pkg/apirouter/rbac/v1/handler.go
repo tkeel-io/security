@@ -13,11 +13,13 @@ limitations under the License.
 package v1
 
 import (
+	"github.com/tkeel-io/security/pkg/apiserver/config"
+	"strings"
+
 	"github.com/tkeel-io/security/pkg/apiserver/response"
 	"github.com/tkeel-io/security/pkg/errcode"
 	"github.com/tkeel-io/security/pkg/logger"
 	"github.com/tkeel-io/security/pkg/models/rbac"
-	"strings"
 
 	"github.com/casbin/casbin/v2"
 	"github.com/emicklei/go-restful"
@@ -29,9 +31,8 @@ type rbacHandler struct {
 	operator *casbin.SyncedEnforcer
 }
 
-func newRBACHandler() *rbacHandler {
-	e, err := rbac.NewSyncedEnforcer()
-
+func newRBACHandler(conf *config.RBACConfig) *rbacHandler {
+	e, err := rbac.NewSyncedEnforcer(conf.Adapter)
 	if err != nil {
 		_log.Error(err)
 		return nil
@@ -106,23 +107,87 @@ func (h *rbacHandler) AddPermissionInRole(req *restful.Request, resp *restful.Re
 	response.SrvErrWithRest(resp, errcode.SuccessServe, ok)
 }
 
-func (h *rbacHandler) PermissionsInUser(req *restful.Request, resp *restful.Response) {
-	userID := req.PathParameter("user_id")
-	tenantID := req.PathParameter("tenant_id")
-	permissions := h.operator.GetPermissionsForUserInDomain(userID, tenantID)
-	response.SrvErrWithRest(resp, errcode.SuccessServe, permissions)
-}
-
 func (h *rbacHandler) DeletePermissionInRole(req *restful.Request, resp *restful.Response) {
-
+	var (
+		err error
+		ok  bool
+	)
+	tenantID := req.PathParameter("tenant_id")
+	role := req.PathParameter("role")
+	permissionAction := req.QueryParameter("permission_action")
+	permissionObject := req.QueryParameter("permission_object")
+	if len(permissionAction) == 0 || len(permissionObject) == 0 {
+		response.SrvErrWithRest(resp, errcode.ErrInvalidParam, nil)
+		return
+	}
+	ok, err = h.operator.RemovePolicy(role, tenantID, permissionObject, permissionAction)
+	if err != nil {
+		_log.Error(err)
+		response.SrvErrWithRest(resp, errcode.ErrInternalServer, nil)
+		return
+	}
+	response.SrvErrWithRest(resp, errcode.SuccessServe, ok)
 }
 
 func (h *rbacHandler) AddRoleToUser(req *restful.Request, resp *restful.Response) {
-
+	var (
+		in  AddRoleForUserIn
+		err error
+		ok  bool
+	)
+	tenantID := req.PathParameter("tenant_id")
+	err = req.ReadEntity(&in)
+	if err != nil || len(in.Roles) == 0 || len(in.UserIDS) == 0 {
+		_log.Error(err)
+		response.SrvErrWithRest(resp, errcode.ErrInvalidParam, nil)
+		return
+	}
+	groupingPolices := make([][]string, len(in.Roles)*len(in.UserIDS))
+	for i := range in.UserIDS {
+		for j := range in.Roles {
+			groupingPolices[(i+1)*(j+1)-1] = []string{in.UserIDS[i], in.Roles[j], tenantID}
+		}
+	}
+	ok, err = h.operator.AddGroupingPolicies(groupingPolices)
+	if err != nil || !ok {
+		_log.Error(err)
+		response.SrvErrWithRest(resp, errcode.ErrInternalServer, nil)
+	}
+	response.SrvErrWithRest(resp, errcode.SuccessServe, groupingPolices)
 }
 
 func (h *rbacHandler) DeleteRoleOnUser(req *restful.Request, resp *restful.Response) {
+	var (
+		ok  bool
+		err error
+	)
+	tenantID := req.PathParameter("tenant_id")
+	userID := req.PathParameter("user_id")
+	role := req.PathParameter("role")
+	ok, err = h.operator.DeleteRoleForUserInDomain(userID, role, tenantID)
+	if err != nil {
+		_log.Error(err)
+		response.SrvErrWithRest(resp, errcode.ErrInternalServer, nil)
+		return
+	}
+	response.SrvErrWithRest(resp, errcode.SuccessServe, ok)
+}
 
+func (h *rbacHandler) UserPermissions(req *restful.Request, resp *restful.Response) {
+	var out []UserPermission
+	tenantID := req.PathParameter("tenant_id")
+	userID := req.PathParameter("user_id")
+	permissions := h.operator.GetPermissionsForUserInDomain(userID, tenantID)
+	for i := range permissions {
+		permissionItem := UserPermission{
+			Role:             permissions[i][0],
+			PermissionObject: permissions[i][2],
+			PermissionAction: permissions[i][3],
+		}
+		out = append(out, permissionItem)
+	}
+
+	response.SrvErrWithRest(resp, errcode.SuccessServe, out)
 }
 
 func (h *rbacHandler) PermissionCheck(req *restful.Request, resp *restful.Response) {

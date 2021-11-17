@@ -1,6 +1,8 @@
 package dao
 
 import (
+	"fmt"
+	"github.com/tkeel-io/security/pkg/apiserver/config"
 	"sync"
 
 	"github.com/tkeel-io/security/pkg/logger"
@@ -15,9 +17,10 @@ var (
 	_log    = logger.NewLogger("auth.models.dao")
 )
 
-func SetUp() {
+func SetUp(conf *config.MysqlConf) {
 	var err error
-	dsn := "root:123456@tcp(139.198.108.153:3306)/tkeelauth?charset=utf8mb4&parseTime=True&loc=Local"
+	dsn := fmt.Sprintf("%s:%s@tcp(%s:%s)/%s?charset=utf8mb4&parseTime=True&loc=Local", conf.User, conf.Password, conf.Host, conf.Port, conf.DBName)
+	_log.Info(dsn)
 	_dbOnce.Do(func() {
 		_db, err = gorm.Open(mysql.Open(dsn), &gorm.Config{
 			DisableForeignKeyConstraintWhenMigrating: true,

@@ -12,7 +12,7 @@
       "name": "Apache 2.0",
       "url": "https://www.apache.org/licenses/LICENSE-2.0.html"
     },
-    "version": "v0.0.0",
+    "version": "0.1.0",
     "x-taggroups": []
   },
   "paths": {
@@ -47,6 +47,9 @@
         "produces": [
           "application/json"
         ],
+        "tags": [
+          "Oauth"
+        ],
         "operationId": "Authenticate",
         "responses": {
           "200": {
@@ -63,7 +66,29 @@
         "produces": [
           "application/json"
         ],
+        "tags": [
+          "Oauth"
+        ],
         "operationId": "Authorize",
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
+    },
+    "/oauth/on_code": {
+      "get": {
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "tags": [
+          "Oauth"
+        ],
+        "operationId": "OnCode",
         "responses": {
           "200": {
             "description": "OK"
@@ -78,6 +103,9 @@
         ],
         "produces": [
           "application/json"
+        ],
+        "tags": [
+          "Oauth"
         ],
         "operationId": "Token",
         "responses": {
@@ -217,7 +245,44 @@
         }
       }
     },
-    "/rbac/{tenant_id}/users/{user}/permissions": {
+    "/rbac/{tenant_id}/users/roles": {
+      "post": {
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "tags": [
+          "RBAC"
+        ],
+        "summary": "add roles for users",
+        "operationId": "AddRoleToUser",
+        "parameters": [
+          {
+            "type": "string",
+            "description": "tenant's ID",
+            "name": "tenant_id",
+            "in": "path",
+            "required": true
+          },
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/v1.AddRoleInDomainIn"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
+    },
+    "/rbac/{tenant_id}/users/{user_id}/permissions": {
       "get": {
         "consumes": [
           "application/json"
@@ -228,8 +293,8 @@
         "tags": [
           "RBAC"
         ],
-        "summary": "delete a role in tenant",
-        "operationId": "PermissionsInUser",
+        "summary": "get user permissions ",
+        "operationId": "UserPermissions",
         "parameters": [
           {
             "type": "string",
@@ -240,8 +305,51 @@
           },
           {
             "type": "string",
-            "description": "user'ID",
-            "name": "user",
+            "description": "user's ID",
+            "name": "user_id",
+            "in": "path",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
+    },
+    "/rbac/{tenant_id}/users/{user_id}/roles/{role}": {
+      "delete": {
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "tags": [
+          "RBAC"
+        ],
+        "summary": "delete a role for user",
+        "operationId": "DeleteRoleOnUser",
+        "parameters": [
+          {
+            "type": "string",
+            "description": "tenant's ID",
+            "name": "tenant_id",
+            "in": "path",
+            "required": true
+          },
+          {
+            "type": "string",
+            "description": "user's ID",
+            "name": "user_id",
+            "in": "path",
+            "required": true
+          },
+          {
+            "type": "string",
+            "description": "role",
+            "name": "role",
             "in": "path",
             "required": true
           }
@@ -264,7 +372,7 @@
         "tags": [
           "RBAC"
         ],
-        "summary": "delete a role in tenant",
+        "summary": "add permission for role",
         "operationId": "AddPermissionInRole",
         "parameters": [
           {
@@ -295,9 +403,7 @@
             "description": "OK"
           }
         }
-      }
-    },
-    "/rbac/{tenant_id}/{role}/permissions/{permission_id}": {
+      },
       "delete": {
         "consumes": [
           "application/json"
@@ -308,7 +414,7 @@
         "tags": [
           "RBAC"
         ],
-        "summary": "delete a role in tenant",
+        "summary": "delete a permission for role ",
         "operationId": "DeletePermissionInRole",
         "parameters": [
           {
@@ -320,17 +426,22 @@
           },
           {
             "type": "string",
-            "description": "permissions'ID",
-            "name": "permission_id",
+            "description": "role'ID",
+            "name": "role",
             "in": "path",
             "required": true
           },
           {
             "type": "string",
-            "description": "role'ID",
-            "name": "role",
-            "in": "path",
-            "required": true
+            "description": "permission object",
+            "name": "permission_object",
+            "in": "query"
+          },
+          {
+            "type": "string",
+            "description": "permission action",
+            "name": "permission_action",
+            "in": "query"
           }
         ],
         "responses": {
@@ -598,6 +709,16 @@
         }
       }
     },
+    "v1.AddRoleInDomainIn": {
+      "required": [
+        "role"
+      ],
+      "properties": {
+        "role": {
+          "type": "string"
+        }
+      }
+    },
     "v1.AddonsEndpoint": {
       "required": [
         "addons_point",
@@ -667,9 +788,13 @@
       "required": [
         "tenant_id",
         "title",
-        "remark"
+        "remark",
+        "admin"
       ],
       "properties": {
+        "admin": {
+          "$ref": "#/definitions/v1.UserCreateIn"
+        },
         "remark": {
           "type": "string"
         },
@@ -685,11 +810,15 @@
     "v1.TenantCreteIn": {
       "required": [
         "title",
-        "Remark"
+        "Remark",
+        "admin"
       ],
       "properties": {
         "Remark": {
           "type": "string"
+        },
+        "admin": {
+          "$ref": "#/definitions/v1.UserCreateIn"
         },
         "title": {
           "type": "string"

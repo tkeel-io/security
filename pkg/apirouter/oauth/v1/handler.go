@@ -10,7 +10,7 @@ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
 limitations under the License.
 */
-package oauth
+package v1
 
 import (
 	"time"
@@ -50,12 +50,24 @@ func (h *oauthHandler) Authorize(req *restful.Request, resp *restful.Response) {
 		return
 	}
 }
+func (h *oauthHandler) Login(req *restful.Request, resp *restful.Response) {
+	err := h.operator.HandleAuthorizeRequest(resp, req.Request)
+	if err != nil {
+		_log.Error(err)
+		return
+	}
+}
 
-func (h *oauthHandler) Authenticate(req *restful.Request, resp *restful.Response) {
+func (h *oauthHandler) OnCode(req *restful.Request, resp *restful.Response) {
+
+	response.SrvErrWithRest(resp, errcode.SuccessServe, req.Request.RequestURI)
+}
+
+func (h *oauthHandler) CheckAuth(req *restful.Request, resp *restful.Response) {
 	token, err := h.operator.ValidationBearerToken(req.Request)
 	if err != nil {
 		_log.Error(err)
-		response.SrvErrWithRest(resp, errcode.ErrInvalidRequest, nil)
+		response.SrvErrWithRest(resp, errcode.ErrInvalidAccessRequest, nil)
 		return
 	}
 
@@ -67,7 +79,7 @@ func (h *oauthHandler) Authenticate(req *restful.Request, resp *restful.Response
 	}
 
 	data := map[string]interface{}{
-		"expires_in": int64(token.GetAccessCreateAt().Add(token.GetAccessExpiresIn()).Sub(time.Now()).Seconds()),
+		"expires_in": int64(time.Until(token.GetAccessCreateAt().Add(token.GetAccessExpiresIn())).Seconds()),
 		"user_id":    token.GetUserID(),
 		"client_id":  token.GetClientID(),
 		"scope":      token.GetScope(),
@@ -77,11 +89,11 @@ func (h *oauthHandler) Authenticate(req *restful.Request, resp *restful.Response
 	response.SrvErrWithRest(resp, errcode.SuccessServe, data)
 }
 
-func (h *oauthHandler) CheckAuth(req *restful.Request, resp *restful.Response) {
+func (h *oauthHandler) Authenticate(req *restful.Request, resp *restful.Response) {
 	token, err := h.operator.ValidationBearerToken(req.Request)
 	if err != nil {
 		_log.Error(err)
-		response.SrvErrWithRest(resp, errcode.ErrInvalidRequest, nil)
+		response.SrvErrWithRest(resp, errcode.ErrInvalidAccessRequest, nil)
 		return
 	}
 
@@ -93,7 +105,7 @@ func (h *oauthHandler) CheckAuth(req *restful.Request, resp *restful.Response) {
 	}
 
 	data := map[string]interface{}{
-		"expires_in": int64(token.GetAccessCreateAt().Add(token.GetAccessExpiresIn()).Sub(time.Now()).Seconds()),
+		"expires_in": int64(time.Until(token.GetAccessCreateAt().Add(token.GetAccessExpiresIn())).Seconds()),
 		"user_id":    token.GetUserID(),
 		"client_id":  token.GetClientID(),
 		"scope":      token.GetScope(),

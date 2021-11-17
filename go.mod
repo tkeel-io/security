@@ -20,7 +20,7 @@ require (
 	github.com/go-sql-driver/mysql v1.6.0
 	github.com/go-stack/stack v1.8.1 // indirect
 	github.com/golang-jwt/jwt v3.2.1+incompatible
-	github.com/google/uuid v1.3.0 // indirect
+	github.com/google/uuid v1.3.0
 	github.com/json-iterator/go v1.1.12 // indirect
 	github.com/lib/pq v1.10.2 // indirect
 	github.com/mailru/easyjson v0.7.7 // indirect
@@ -28,6 +28,7 @@ require (
 	github.com/pkg/errors v0.9.1
 	github.com/sirupsen/logrus v1.8.1
 	github.com/spf13/cobra v1.2.1
+	github.com/spf13/viper v1.8.1
 	github.com/stretchr/testify v1.7.0
 	go.mongodb.org/mongo-driver v1.7.4 // indirect
 	golang.org/x/crypto v0.0.0-20210921155107-089bfa567519

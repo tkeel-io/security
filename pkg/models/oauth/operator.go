@@ -13,6 +13,7 @@ limitations under the License.
 package oauth
 
 import (
+	"github.com/tkeel-io/security/pkg/apiserver/config"
 	"golang.org/x/crypto/bcrypt"
 	"net/http"
 	"strconv"
@@ -43,17 +44,17 @@ var (
 func GetOauthOperator() *server.Server {
 	return _oauthOperator
 }
-func OauthOperatorSetup() error {
+func NewOperator(conf *config.OAuth2Config) (*server.Server, error) {
 	manager := manage.NewDefaultManager()
 	manager.SetAuthorizeCodeTokenCfg(manage.DefaultAuthorizeCodeTokenCfg)
 	// token store
 	redisStore := oredis.NewRedisStore(&redis.Options{
-		Addr: "127.0.0.1:6379",
-		DB:   15,
+		Addr: conf.Redis.Addr,
+		DB:   conf.Redis.DB,
 	})
 	manager.MapTokenStorage(redisStore)
 	// generate jwt access token
-	manager.MapAccessGenerate(generates.NewJWTAccessGenerate("", []byte("00000000"), jwt.SigningMethodHS512))
+	manager.MapAccessGenerate(generates.NewJWTAccessGenerate("", []byte(conf.AccessGenerate.SecurityKey), jwt.SigningMethodHS512))
 
 	clientStore := store.NewClientStore()
 	clientStore.Set("000000", &models.Client{
@@ -62,7 +63,6 @@ func OauthOperatorSetup() error {
 		Domain: "http://localhost",
 	})
 	manager.MapClientStorage(clientStore)
-
 	_oauthOperator = server.NewServer(server.NewConfig(), manager)
 	_oauthOperator.SetPasswordAuthorizationHandler(func(username, password string) (userID string, err error) {
 		splits := strings.Split(username, "-")
@@ -88,16 +88,20 @@ func OauthOperatorSetup() error {
 		return
 	})
 	_oauthOperator.SetUserAuthorizationHandler(func(w http.ResponseWriter, r *http.Request) (userID string, err error) {
+		_log.Info("set user SetUserAuthorizationHandler")
 		return
 	})
-	_oauthOperator.SetAuthorizeScopeHandler(func(w http.ResponseWriter, r *http.Request) (scope string, err error) {
-		return
-	})
+	//_oauthOperator.SetAuthorizeScopeHandler(func(w http.ResponseWriter, r *http.Request) (scope string, err error) {
+	//	_log.Info("SetAuthorizeScopeHandler")
+	//	return
+	//})
+	//
+	//_oauthOperator.SetUserAuthorizationHandler(userAuthorizeHandler)
+	//_oauthOperator.SetAuthorizeScopeHandler(authorizeScopeHandler)
 	_oauthOperator.SetResponseTokenHandler(func(w http.ResponseWriter, data map[string]interface{}, header http.Header, statusCode ...int) error {
 		response.SrvErrWithWriter(w, errcode.SuccessServe, data)
 		return nil
 	})
-
 	_oauthOperator.SetInternalErrorHandler(func(err error) (re *errors.Response) {
 		return &errors.Response{
 			Error:       err,
@@ -106,39 +110,31 @@ func OauthOperatorSetup() error {
 			StatusCode:  http.StatusInternalServerError,
 		}
 	})
-
 	_oauthOperator.SetResponseErrorHandler(func(re *errors.Response) {
 		_log.Error("response error:", re.Error.Error())
 	})
-	// AuthorizationCode   GrantType = "authorization_code"
-	// PasswordCredentials GrantType = "password"
-	// ClientCredentials   GrantType = "client_credentials"
-	// Refreshing          GrantType = "refresh_token"
-	// Implicit
 	_oauthOperator.SetAllowedGrantType(oauth2.AuthorizationCode, oauth2.Implicit, oauth2.PasswordCredentials, oauth2.Refreshing, oauth2.ClientCredentials)
 	// _oauthOperator.SetUserAuthorizationHandler(userAuthorizeHandler)
 	_oauthOperator.SetAllowGetAccessRequest(true)
-
-	_oauthOperator.SetClientAuthorizedHandler(func(clientID string, grant oauth2.GrantType) (allowed bool, err error) {
-		_log.Error(clientID, grant)
-		if grant != oauth2.PasswordCredentials {
-
-			return false, nil
-		}
-		return true, nil
-	})
-
+	//_oauthOperator.SetClientAuthorizedHandler(func(clientID string, grant oauth2.GrantType) (allowed bool, err error) {
+	//	//_log.Error(clientID, grant)
+	//	//if grant != oauth2.PasswordCredentials {
+	//	//
+	//	//	return false, nil
+	//	//}
+	//	return true, nil
+	//})
 	_oauthOperator.SetClientInfoHandler(func(r *http.Request) (clientID, clientSecret string, err error) {
 		return "000000", "999999", nil
 	})
-
-	_oauthOperator.SetClientScopeHandler(func(tgr *oauth2.TokenGenerateRequest) (allowed bool, err error) {
-		return true, nil
-	})
-
-	_oauthOperator.SetRefreshingScopeHandler(func(tgr *oauth2.TokenGenerateRequest, oldScope string) (allowed bool, err error) {
-		return false, nil
-	})
-
-	return nil
+	//_oauthOperator.SetClientScopeHandler(func(tgr *oauth2.TokenGenerateRequest) (allowed bool, err error) {
+	//	_log.Info("client scope handler")
+	//	return true, nil
+	//})
+	//
+	//_oauthOperator.SetRefreshingScopeHandler(func(tgr *oauth2.TokenGenerateRequest, oldScope string) (allowed bool, err error) {
+	//	_log.Info("refresh scope handler")
+	//	return false, nil
+	//})
+	return _oauthOperator, nil
 }
