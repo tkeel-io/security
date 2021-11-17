@@ -13,6 +13,8 @@ limitations under the License.
 package rbac
 
 import (
+	"fmt"
+	"github.com/tkeel-io/security/pkg/apiserver/config"
 	"github.com/tkeel-io/security/pkg/logger"
 
 	"github.com/casbin/casbin/v2"
@@ -26,8 +28,9 @@ var (
 	_enforcer *casbin.SyncedEnforcer
 )
 
-func NewSyncedEnforcer() (enforcer *casbin.SyncedEnforcer, err error) {
-	adapter, err := xormadapter.NewAdapter("mysql", "root:123456@tcp(139.198.108.153:3306)/tkeelauth", true)
+func NewSyncedEnforcer(conf *config.MysqlConf) (enforcer *casbin.SyncedEnforcer, err error) {
+	dataSourceName := fmt.Sprintf("%s:%s@tcp(%s:%s)/%s", conf.User, conf.Password, conf.Host, conf.Port, conf.DBName) // "root:123456@tcp(139.198.108.153:3306)/tkeelauth"
+	adapter, err := xormadapter.NewAdapter("mysql", dataSourceName, true)
 	if err != nil {
 		_log.Error(err)
 		return
@@ -59,7 +62,6 @@ func AddGroupingPolicy(gPolicy *GroupingPolicy) (ok bool, err error) {
 		_log.Error(err)
 		return
 	}
-
 	params := []string{gPolicy.Subject, gPolicy.Role, gPolicy.Domain}
 	ok, err = _enforcer.AddGroupingPolicy(params)
 	return

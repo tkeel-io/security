@@ -14,6 +14,7 @@ package v1
 
 import (
 	"github.com/emicklei/go-restful"
+	"github.com/tkeel-io/security/pkg/apiserver/config"
 	"github.com/tkeel-io/security/pkg/apiserver/response"
 	"github.com/tkeel-io/security/pkg/errcode"
 	"github.com/tkeel-io/security/pkg/logger"
@@ -32,8 +33,8 @@ type entityHandler struct {
 	tokenOperator *oauth.JWTAccessGenerate
 }
 
-func newEntityHandler() *entityHandler {
-	operator := oauth.NewJWTAccessGenerate("", []byte("7777777"), jwt.SigningMethodHS512)
+func newEntityHandler(conf *config.EntityConfig) *entityHandler {
+	operator := oauth.NewJWTAccessGenerate("", []byte(conf.SecurityKey), jwt.SigningMethodHS512)
 	return &entityHandler{operator}
 }
 

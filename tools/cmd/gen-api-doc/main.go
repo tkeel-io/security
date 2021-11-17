@@ -16,11 +16,10 @@ import (
 	"encoding/json"
 	"flag"
 	"fmt"
+	"github.com/tkeel-io/security/pkg/apirouter/oauth/v1"
 	"io/ioutil"
 	"log"
 
-	oauthrouter "github.com/tkeel-io/security/pkg/apirouter/oauth"
-	openapirouter "github.com/tkeel-io/security/pkg/apirouter/openapi/v1"
 	rbacrouter "github.com/tkeel-io/security/pkg/apirouter/rbac/v1"
 	tenantrouter "github.com/tkeel-io/security/pkg/apirouter/tenant/v1"
 	"github.com/tkeel-io/security/pkg/logger"
@@ -82,9 +81,8 @@ func validateSpec(apiSpec []byte) error {
 
 func generateSwaggerJSON() []byte {
 	container := restful.NewContainer()
-	(oauthrouter.AddToRestContainer(container))
-	(openapirouter.AddToRestContainer(container))
-	(rbacrouter.AddToRestContainer(container))
+	(v1.AddToRestContainer(container))
+	(rbacrouter.RegisterToRestContainer(container))
 	(tenantrouter.AddToRestContainer(container))
 	config := restfulspec.Config{
 		WebServices:                   container.RegisteredWebServices(),

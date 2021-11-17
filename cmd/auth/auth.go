@@ -51,6 +51,7 @@ func Run(ctx context.Context, opt *options.ServerRunOptions) (err error) {
 	if err != nil {
 		return
 	}
+
 	err = apiServer.PrepareRun(ctx.Done())
 	if err != nil {
 		return

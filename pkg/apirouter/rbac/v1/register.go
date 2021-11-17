@@ -13,26 +13,38 @@ limitations under the License.
 package v1
 
 import (
-	"github.com/tkeel-io/security/pkg/constants"
+	"github.com/tkeel-io/security/pkg/apiserver/config"
 	"net/http"
 
 	"github.com/tkeel-io/security/pkg/apiserver/filters"
+	"github.com/tkeel-io/security/pkg/constants"
 	"github.com/tkeel-io/security/pkg/errcode"
 
 	"github.com/emicklei/go-restful"
 	restfulspec "github.com/emicklei/go-restful-openapi"
 )
 
-func AddToRestContainer(c *restful.Container) error {
-	webservice := &restful.WebService{}
-	webservice.Path("/rbac").
-		Consumes(restful.MIME_JSON).
-		Produces(restful.MIME_JSON).
-		Filter(filters.Auth())
+// register
+func RegisterToRestContainer(c *restful.Container, conf *config.RBACConfig) error {
+	var webservice *restful.WebService
+	for _, v := range c.RegisteredWebServices() {
+		if v.RootPath() == "v1" {
+			webservice = v
+			break
+		}
+	}
+	if webservice == nil {
+		webservice = &restful.WebService{}
+		webservice.Path("v1").
+			Produces(restful.MIME_JSON).
+			Filter(filters.Auth())
 
-	handler := newRBACHandler()
+		c.Add(webservice)
+	}
 
-	webservice.Route(webservice.POST("/{tenant_id}/roles").
+	handler := newRBACHandler(conf)
+
+	webservice.Route(webservice.POST("rbac/{tenant_id}/roles").
 		To(handler.AddRoleInDomain).
 		Doc(" Add a role in tenant ").
 		Param(webservice.PathParameter("tenant_id", "tenant's ID")).
@@ -40,20 +52,20 @@ func AddToRestContainer(c *restful.Container) error {
 		Returns(http.StatusOK, errcode.ErrMsgOK, nil).
 		Metadata(restfulspec.KeyOpenAPITags, []string{constants.APITagRBAC}))
 
-	webservice.Route(webservice.GET("/{tenant_id}/roles").
+	webservice.Route(webservice.GET("rbac/{tenant_id}/roles").
 		To(handler.RolesInDomain).
 		Doc("Get role list in tenant").
 		Param(webservice.PathParameter("tenant_id", "tenant's ID")).
 		Metadata(restfulspec.KeyOpenAPITags, []string{constants.APITagRBAC}))
 
-	webservice.Route(webservice.DELETE("/{tenant_id}/roles/{role}").
+	webservice.Route(webservice.DELETE("rbac/{tenant_id}/roles/{role}").
 		To(handler.DeleteRoleInDomain).
 		Doc("delete a role in tenant").
 		Param(webservice.PathParameter("tenant_id", "tenant's ID")).
 		Param(webservice.PathParameter("role", "role'ID")).
 		Metadata(restfulspec.KeyOpenAPITags, []string{constants.APITagRBAC}))
 
-	webservice.Route(webservice.POST("/{tenant_id}/{role}/permissions").
+	webservice.Route(webservice.POST("rbac/{tenant_id}/{role}/permissions").
 		To(handler.AddPermissionInRole).
 		Doc("add permission for role").
 		Param(webservice.PathParameter("tenant_id", "tenant's ID")).
@@ -61,7 +73,7 @@ func AddToRestContainer(c *restful.Container) error {
 		Reads(AddPermissionIn{}).
 		Metadata(restfulspec.KeyOpenAPITags, []string{constants.APITagRBAC}))
 
-	webservice.Route(webservice.DELETE("/{tenant_id}/{role}/permissions").
+	webservice.Route(webservice.DELETE("rbac/{tenant_id}/{role}/permissions").
 		To(handler.DeletePermissionInRole).
 		Doc("delete a permission for role ").
 		Param(webservice.PathParameter("tenant_id", "tenant's ID")).
@@ -70,14 +82,14 @@ func AddToRestContainer(c *restful.Container) error {
 		Param(webservice.QueryParameter("permission_action", "permission action")).
 		Metadata(restfulspec.KeyOpenAPITags, []string{constants.APITagRBAC}))
 
-	webservice.Route(webservice.POST("/{tenant_id}/users/roles").
+	webservice.Route(webservice.POST("rbac/{tenant_id}/users/roles").
 		To(handler.AddRoleToUser).
 		Doc("add roles for users").
 		Param(webservice.PathParameter("tenant_id", "tenant's ID")).
 		Reads(AddRoleInDomainIn{}).
 		Metadata(restfulspec.KeyOpenAPITags, []string{constants.APITagRBAC}))
 
-	webservice.Route(webservice.DELETE("/{tenant_id}/users/{user_id}/roles/{role}").
+	webservice.Route(webservice.DELETE("rbac/{tenant_id}/users/{user_id}/roles/{role}").
 		To(handler.DeleteRoleOnUser).
 		Doc("delete a role for user").
 		Param(webservice.PathParameter("tenant_id", "tenant's ID")).
@@ -85,19 +97,18 @@ func AddToRestContainer(c *restful.Container) error {
 		Param(webservice.PathParameter("role", "role")).
 		Metadata(restfulspec.KeyOpenAPITags, []string{constants.APITagRBAC}))
 
-	webservice.Route(webservice.GET("/{tenant_id}/users/{user_id}/permissions").
+	webservice.Route(webservice.GET("rbac/{tenant_id}/users/{user_id}/permissions").
 		To(handler.UserPermissions).
 		Doc("get user permissions ").
 		Param(webservice.PathParameter("tenant_id", "tenant's ID")).
 		Param(webservice.PathParameter("user_id", "user's ID")).
 		Metadata(restfulspec.KeyOpenAPITags, []string{constants.APITagRBAC}))
 
-	webservice.Route(webservice.POST("/permission/check").
+	webservice.Route(webservice.POST("rbac/permission/check").
 		To(handler.PermissionCheck).
 		Doc("delete a role in tenant").
 		Reads(PermissionCheck{}).
 		Metadata(restfulspec.KeyOpenAPITags, []string{constants.APITagRBAC}))
 
-	c.Add(webservice)
 	return nil
 }

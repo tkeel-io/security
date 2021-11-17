@@ -13,6 +13,7 @@ limitations under the License.
 package v1
 
 import (
+	"github.com/tkeel-io/security/pkg/apiserver/config"
 	"strings"
 
 	"github.com/tkeel-io/security/pkg/apiserver/response"
@@ -30,9 +31,8 @@ type rbacHandler struct {
 	operator *casbin.SyncedEnforcer
 }
 
-func newRBACHandler() *rbacHandler {
-	e, err := rbac.NewSyncedEnforcer()
-
+func newRBACHandler(conf *config.RBACConfig) *rbacHandler {
+	e, err := rbac.NewSyncedEnforcer(conf.Adapter)
 	if err != nil {
 		_log.Error(err)
 		return nil

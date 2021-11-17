@@ -14,12 +14,11 @@ package apiserver
 
 import (
 	"context"
+	rbacrouter "github.com/tkeel-io/security/pkg/apirouter/rbac/v1"
 	"net/http"
 
 	entityrouter "github.com/tkeel-io/security/pkg/apirouter/entity/v1"
-	oauthrouter "github.com/tkeel-io/security/pkg/apirouter/oauth"
-	openapirouter "github.com/tkeel-io/security/pkg/apirouter/openapi/v1"
-	rbacrouter "github.com/tkeel-io/security/pkg/apirouter/rbac/v1"
+	oauthV1 "github.com/tkeel-io/security/pkg/apirouter/oauth/v1"
 	tenantrouter "github.com/tkeel-io/security/pkg/apirouter/tenant/v1"
 	"github.com/tkeel-io/security/pkg/apiserver/config"
 	"github.com/tkeel-io/security/pkg/apiserver/filters"
@@ -40,7 +39,6 @@ type APIServer struct {
 }
 
 func (s *APIServer) Run(ctx context.Context) (err error) {
-	dao.SetUp()
 	shutdownCtx, cancel := context.WithCancel(context.Background())
 	defer cancel()
 
@@ -63,24 +61,22 @@ func (s *APIServer) Run(ctx context.Context) (err error) {
 func (s *APIServer) PrepareRun(stopCh <-chan struct{}) error {
 	s.restContainer = restful.NewContainer()
 	s.restContainer.Router(restful.CurlyRouter{})
-
+	dao.SetUp(s.Config.Database.Mysql)
+	_log.Info(s.Config.RBAC.Adapter, "+", s.Config.Database.Mysql, s.Config.Oauth2)
 	s.installApis()
-
 	for _, webservice := range s.restContainer.RegisteredWebServices() {
 		_log.Infof("%s", webservice.RootPath())
 	}
 	s.Server.Handler = s.restContainer
-
 	return nil
 }
 
 func (s *APIServer) installApis() {
 	s.restContainer.Filter(filters.GlobalLog())
-	must(oauthrouter.AddToRestContainer(s.restContainer))
-	must(openapirouter.AddToRestContainer(s.restContainer))
-	must(rbacrouter.AddToRestContainer(s.restContainer))
+	must(oauthV1.AddToRestContainer(s.restContainer, s.Config.Oauth2))
+	must(rbacrouter.RegisterToRestContainer(s.restContainer, s.Config.RBAC))
 	must(tenantrouter.AddToRestContainer(s.restContainer))
-	must(entityrouter.AddToRestContainer(s.restContainer))
+	must(entityrouter.AddToRestContainer(s.restContainer, s.Config.Entity))
 }
 
 func must(err error) {

@@ -25,8 +25,9 @@ type ServerRunOptions struct {
 }
 
 func NewServerRunOptions() *ServerRunOptions {
+	conf, _ := config.TryLoadFromDisk()
 	opts := &ServerRunOptions{
-		Config: config.New(),
+		Config: conf,
 	}
 	return opts
 }
