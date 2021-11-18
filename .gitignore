@@ -7,9 +7,27 @@
 
 # Test binary, built with `go test -c`
 *.test
+test_report_e2e.json
+test_report_unit.json
+*/test*
 
 # Output of the go coverage tool, specifically when used with LiteIDE
 *.out
 
 # Dependency directories (remove the comment below to include it)
 # vendor/
+/dist
+.idea
+**/.DS_Store
+.vscode
+
+# Visual Studio 2015/2017/2019 cache/options directory
+.vs/
+/vendor
+**/*.log
+**/.project
+**/.factorypath
+google
+*/tip*
+golint
+
