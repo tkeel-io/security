@@ -11,20 +11,3 @@ See the License for the specific language governing permissions and
 limitations under the License.
 */
 package rbac
-
-import (
-	"github.com/stretchr/testify/assert"
-	"testing"
-)
-
-func TestNewEnforcer(t *testing.T) {
-	gotEnforcer, err := NewSyncedEnforcer()
-	assert.Equal(t, err, nil)
-	assert.NotNil(t, gotEnforcer)
-	_, err = gotEnforcer.AddPolicy("admin", "domain1", "keel", "*")
-	assert.Nil(t, err)
-	_, err = gotEnforcer.AddGroupingPolicy("alice", "admin", "domain1")
-	assert.Nil(t, err)
-	_, err = gotEnforcer.Enforce("alice", "domain1", "keel", "*")
-	assert.Nil(t, err)
-}

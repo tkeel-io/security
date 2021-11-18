@@ -16,34 +16,74 @@
     "x-taggroups": []
   },
   "paths": {
-    "/identify": {
-      "get": {
-        "consumes": [
-          "application/json"
-        ],
+    "/v1/entity/token/valid": {
+      "post": {
         "produces": [
           "application/json"
         ],
         "tags": [
-          "Required OpenApi"
+          "Entity"
         ],
-        "summary": "identify for plugin register ",
-        "operationId": "Identify",
+        "summary": "valid a entity token",
+        "operationId": "TokenValid",
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/v1.TokenValidIn"
+            }
+          }
+        ],
         "responses": {
           "200": {
-            "description": "ok",
-            "schema": {
-              "$ref": "#/definitions/v1.identifyResponse"
-            }
+            "description": "OK"
           }
         }
       }
     },
-    "/oauth/authenticate": {
+    "/v1/entity/{entity_type}/{entity_id}/token": {
       "get": {
-        "consumes": [
+        "produces": [
           "application/json"
         ],
+        "tags": [
+          "Entity"
+        ],
+        "summary": "get a entity token",
+        "operationId": "Token",
+        "parameters": [
+          {
+            "type": "string",
+            "description": "EntityType",
+            "name": "entity_type",
+            "in": "path",
+            "required": true
+          },
+          {
+            "type": "string",
+            "description": "Entity's ID",
+            "name": "entity_id",
+            "in": "path",
+            "required": true
+          },
+          {
+            "type": "string",
+            "description": "invalid period( seconds )",
+            "name": "expires_in",
+            "in": "query"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
+    },
+    "/v1/oauth/authenticate": {
+      "get": {
         "produces": [
           "application/json"
         ],
@@ -58,11 +98,8 @@
         }
       }
     },
-    "/oauth/authorize": {
+    "/v1/oauth/authorize": {
       "get": {
-        "consumes": [
-          "application/json"
-        ],
         "produces": [
           "application/json"
         ],
@@ -77,11 +114,8 @@
         }
       }
     },
-    "/oauth/on_code": {
+    "/v1/oauth/on_code": {
       "get": {
-        "consumes": [
-          "application/json"
-        ],
         "produces": [
           "application/json"
         ],
@@ -96,11 +130,8 @@
         }
       }
     },
-    "/oauth/token": {
+    "/v1/oauth/token": {
       "get": {
-        "consumes": [
-          "application/json"
-        ],
         "produces": [
           "application/json"
         ],
@@ -115,11 +146,8 @@
         }
       }
     },
-    "/rbac/permission/check": {
+    "/v1/rbac/permission/check": {
       "post": {
-        "consumes": [
-          "application/json"
-        ],
         "produces": [
           "application/json"
         ],
@@ -145,11 +173,8 @@
         }
       }
     },
-    "/rbac/{tenant_id}/roles": {
+    "/v1/rbac/{tenant_id}/roles": {
       "get": {
-        "consumes": [
-          "application/json"
-        ],
         "produces": [
           "application/json"
         ],
@@ -174,9 +199,6 @@
         }
       },
       "post": {
-        "consumes": [
-          "application/json"
-        ],
         "produces": [
           "application/json"
         ],
@@ -209,11 +231,8 @@
         }
       }
     },
-    "/rbac/{tenant_id}/roles/{role}": {
+    "/v1/rbac/{tenant_id}/roles/{role}": {
       "delete": {
-        "consumes": [
-          "application/json"
-        ],
         "produces": [
           "application/json"
         ],
@@ -245,11 +264,8 @@
         }
       }
     },
-    "/rbac/{tenant_id}/users/roles": {
+    "/v1/rbac/{tenant_id}/users/roles": {
       "post": {
-        "consumes": [
-          "application/json"
-        ],
         "produces": [
           "application/json"
         ],
@@ -282,11 +298,8 @@
         }
       }
     },
-    "/rbac/{tenant_id}/users/{user_id}/permissions": {
+    "/v1/rbac/{tenant_id}/users/{user_id}/permissions": {
       "get": {
-        "consumes": [
-          "application/json"
-        ],
         "produces": [
           "application/json"
         ],
@@ -318,11 +331,8 @@
         }
       }
     },
-    "/rbac/{tenant_id}/users/{user_id}/roles/{role}": {
+    "/v1/rbac/{tenant_id}/users/{user_id}/roles/{role}": {
       "delete": {
-        "consumes": [
-          "application/json"
-        ],
         "produces": [
           "application/json"
         ],
@@ -361,11 +371,8 @@
         }
       }
     },
-    "/rbac/{tenant_id}/{role}/permissions": {
+    "/v1/rbac/{tenant_id}/{role}/permissions": {
       "post": {
-        "consumes": [
-          "application/json"
-        ],
         "produces": [
           "application/json"
         ],
@@ -405,9 +412,6 @@
         }
       },
       "delete": {
-        "consumes": [
-          "application/json"
-        ],
         "produces": [
           "application/json"
         ],
@@ -451,34 +455,140 @@
         }
       }
     },
-    "/status": {
-      "get": {
-        "consumes": [
-          "application/json"
-        ],
+    "/v1/tenant": {
+      "post": {
         "produces": [
           "application/json"
         ],
         "tags": [
-          "Required OpenApi"
+          "Tenant"
         ],
-        "summary": " status for plugin register ",
-        "operationId": "Status",
+        "summary": " Create a tenant",
+        "operationId": "Create",
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/v1.TenantCreteIn"
+            }
+          }
+        ],
         "responses": {
           "200": {
             "description": "ok",
             "schema": {
-              "$ref": "#/definitions/v1.status"
+              "$ref": "#/definitions/v1.TenantCreateOut"
             }
           }
         }
       }
     },
-    "/tenant": {
+    "/v1/tenant/users": {
       "get": {
-        "consumes": [
+        "produces": [
           "application/json"
         ],
+        "tags": [
+          "Tenant"
+        ],
+        "summary": "get users",
+        "operationId": "UserQuery",
+        "responses": {
+          "200": {
+            "description": "ok",
+            "schema": {
+              "type": "array",
+              "items": {
+                "$ref": "#/definitions/dao.User"
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "produces": [
+          "application/json"
+        ],
+        "tags": [
+          "Tenant"
+        ],
+        "summary": "create a user",
+        "operationId": "UserCreate",
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/v1.UserCreateIn"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "ok",
+            "schema": {
+              "$ref": "#/definitions/dao.User"
+            }
+          }
+        }
+      }
+    },
+    "/v1/tenant/users/{user_id}": {
+      "delete": {
+        "produces": [
+          "application/json"
+        ],
+        "tags": [
+          "Tenant"
+        ],
+        "summary": "delete a  users",
+        "operationId": "UserDelete",
+        "parameters": [
+          {
+            "type": "string",
+            "name": "user_id",
+            "in": "path",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "ok"
+          }
+        }
+      }
+    },
+    "/v1/tenant/{tenant_id}": {
+      "delete": {
+        "produces": [
+          "application/json"
+        ],
+        "tags": [
+          "Tenant"
+        ],
+        "summary": "delete a tenant",
+        "operationId": "Delete",
+        "parameters": [
+          {
+            "type": "string",
+            "description": "tenant's ID",
+            "name": "tenant_id",
+            "in": "path",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "ok"
+          }
+        }
+      }
+    },
+    "/v1/tenants": {
+      "get": {
         "produces": [
           "application/json"
         ],
@@ -508,151 +618,6 @@
                 "$ref": "#/definitions/*dao.Tenant"
               }
             }
-          }
-        }
-      },
-      "post": {
-        "consumes": [
-          "application/json"
-        ],
-        "produces": [
-          "application/json"
-        ],
-        "tags": [
-          "Tenant"
-        ],
-        "summary": " Create a tenant",
-        "operationId": "Create",
-        "parameters": [
-          {
-            "name": "body",
-            "in": "body",
-            "required": true,
-            "schema": {
-              "$ref": "#/definitions/v1.TenantCreteIn"
-            }
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "ok",
-            "schema": {
-              "$ref": "#/definitions/v1.TenantCreateOut"
-            }
-          }
-        }
-      }
-    },
-    "/tenant/users": {
-      "get": {
-        "consumes": [
-          "application/json"
-        ],
-        "produces": [
-          "application/json"
-        ],
-        "tags": [
-          "Tenant"
-        ],
-        "summary": "get users",
-        "operationId": "UserQuery",
-        "responses": {
-          "200": {
-            "description": "ok",
-            "schema": {
-              "type": "array",
-              "items": {
-                "$ref": "#/definitions/dao.User"
-              }
-            }
-          }
-        }
-      },
-      "post": {
-        "consumes": [
-          "application/json"
-        ],
-        "produces": [
-          "application/json"
-        ],
-        "tags": [
-          "Tenant"
-        ],
-        "summary": "create a user",
-        "operationId": "UserCreate",
-        "parameters": [
-          {
-            "name": "body",
-            "in": "body",
-            "required": true,
-            "schema": {
-              "$ref": "#/definitions/v1.UserCreateIn"
-            }
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "ok",
-            "schema": {
-              "$ref": "#/definitions/dao.User"
-            }
-          }
-        }
-      }
-    },
-    "/tenant/users/{user_id}": {
-      "delete": {
-        "consumes": [
-          "application/json"
-        ],
-        "produces": [
-          "application/json"
-        ],
-        "tags": [
-          "Tenant"
-        ],
-        "summary": "delete a  users",
-        "operationId": "UserDelete",
-        "parameters": [
-          {
-            "type": "string",
-            "name": "user_id",
-            "in": "path",
-            "required": true
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "ok"
-          }
-        }
-      }
-    },
-    "/tenant/{tenant_id}": {
-      "delete": {
-        "consumes": [
-          "application/json"
-        ],
-        "produces": [
-          "application/json"
-        ],
-        "tags": [
-          "Tenant"
-        ],
-        "summary": "delete a tenant",
-        "operationId": "Delete",
-        "parameters": [
-          {
-            "type": "string",
-            "description": "tenant's ID",
-            "name": "tenant_id",
-            "in": "path",
-            "required": true
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "ok"
           }
         }
       }
@@ -719,53 +684,6 @@
         }
       }
     },
-    "v1.AddonsEndpoint": {
-      "required": [
-        "addons_point",
-        "endpoint"
-      ],
-      "properties": {
-        "addons_point": {
-          "type": "string"
-        },
-        "endpoint": {
-          "type": "string"
-        }
-      }
-    },
-    "v1.AddonsPoint": {
-      "required": [
-        "addons_point"
-      ],
-      "properties": {
-        "addons_point": {
-          "type": "string"
-        },
-        "desc": {
-          "type": "string"
-        }
-      }
-    },
-    "v1.MainPlugin": {
-      "required": [
-        "id",
-        "endpoints"
-      ],
-      "properties": {
-        "endpoints": {
-          "type": "array",
-          "items": {
-            "$ref": "#/definitions/v1.AddonsEndpoint"
-          }
-        },
-        "id": {
-          "type": "string"
-        },
-        "version": {
-          "type": "string"
-        }
-      }
-    },
     "v1.PermissionCheck": {
       "required": [
         "user_id",
@@ -825,6 +743,16 @@
         }
       }
     },
+    "v1.TokenValidIn": {
+      "required": [
+        "entity_token"
+      ],
+      "properties": {
+        "entity_token": {
+          "type": "string"
+        }
+      }
+    },
     "v1.UserCreateIn": {
       "required": [
         "tenant_id",
@@ -852,64 +780,6 @@
           "format": "int32"
         },
         "username": {
-          "type": "string"
-        }
-      }
-    },
-    "v1.identifyResponse": {
-      "required": [
-        "code",
-        "msg",
-        "plugin_id",
-        "version",
-        "tkeel_version"
-      ],
-      "properties": {
-        "addons_points": {
-          "type": "array",
-          "items": {
-            "$ref": "#/definitions/v1.AddonsPoint"
-          }
-        },
-        "code": {
-          "type": "integer",
-          "format": "int32"
-        },
-        "main_plugins": {
-          "type": "array",
-          "items": {
-            "$ref": "#/definitions/v1.MainPlugin"
-          }
-        },
-        "msg": {
-          "type": "string"
-        },
-        "plugin_id": {
-          "type": "string"
-        },
-        "tkeel_version": {
-          "type": "string"
-        },
-        "version": {
-          "type": "string"
-        }
-      }
-    },
-    "v1.status": {
-      "required": [
-        "code",
-        "msg",
-        "status"
-      ],
-      "properties": {
-        "code": {
-          "type": "integer",
-          "format": "int32"
-        },
-        "msg": {
-          "type": "string"
-        },
-        "status": {
           "type": "string"
         }
       }

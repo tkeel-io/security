@@ -14,16 +14,17 @@ package apiserver
 
 import (
 	"context"
-	rbacrouter "github.com/tkeel-io/security/pkg/apirouter/rbac/v1"
 	"net/http"
 
 	entityrouter "github.com/tkeel-io/security/pkg/apirouter/entity/v1"
 	oauthV1 "github.com/tkeel-io/security/pkg/apirouter/oauth/v1"
+	rbacrouter "github.com/tkeel-io/security/pkg/apirouter/rbac/v1"
 	tenantrouter "github.com/tkeel-io/security/pkg/apirouter/tenant/v1"
 	"github.com/tkeel-io/security/pkg/apiserver/config"
 	"github.com/tkeel-io/security/pkg/apiserver/filters"
 	"github.com/tkeel-io/security/pkg/logger"
 	"github.com/tkeel-io/security/pkg/models/dao"
+	"github.com/tkeel-io/security/tools/swagger"
 
 	"github.com/emicklei/go-restful"
 )
@@ -62,12 +63,14 @@ func (s *APIServer) PrepareRun(stopCh <-chan struct{}) error {
 	s.restContainer = restful.NewContainer()
 	s.restContainer.Router(restful.CurlyRouter{})
 	dao.SetUp(s.Config.Database.Mysql)
-	_log.Info(s.Config.RBAC.Adapter, "+", s.Config.Database.Mysql, s.Config.Oauth2)
 	s.installApis()
 	for _, webservice := range s.restContainer.RegisteredWebServices() {
 		_log.Infof("%s", webservice.RootPath())
 	}
 	s.Server.Handler = s.restContainer
+
+	//
+	swagger.GenerateSwaggerJSON(s.restContainer, swagger.GenAuthSwaggerObjectFunc(), "./api/auth-openapi-spec/swagger.json")
 	return nil
 }
 
