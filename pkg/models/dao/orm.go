@@ -2,9 +2,9 @@ package dao
 
 import (
 	"fmt"
-	"github.com/tkeel-io/security/pkg/apiserver/config"
 	"sync"
 
+	"github.com/tkeel-io/security/pkg/apiserver/config"
 	"github.com/tkeel-io/security/pkg/logger"
 
 	"gorm.io/driver/mysql"

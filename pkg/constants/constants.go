@@ -13,9 +13,12 @@ limitations under the License.
 package constants
 
 const (
-	APITagPluginRequired = "Required OpenApi"
-	APITagRBAC           = "RBAC"
-	APITagTenant         = "Tenant"
-	APITagOauth          = "Oauth"
-	APITagEntity         = "Entity"
+	// APITagRBAC swagger tag RBAC.
+	APITagRBAC = "RBAC"
+	// APITagTenant swagger tag Tenant.
+	APITagTenant = "Tenant"
+	// APITagOauth swagger tag Oauth.
+	APITagOauth = "Oauth"
+	// APITagEntity swagger tag Entity.
+	APITagEntity = "Entity"
 )

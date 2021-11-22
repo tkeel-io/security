@@ -13,9 +13,9 @@ limitations under the License.
 package filters
 
 import (
-	"github.com/emicklei/go-restful"
-
 	"github.com/tkeel-io/security/pkg/logger"
+
+	"github.com/emicklei/go-restful"
 )
 
 var _log = logger.NewLogger("auth.apiserver.filter")

@@ -13,16 +13,19 @@ limitations under the License.
 package filters
 
 import (
-	"github.com/emicklei/go-restful"
 	"github.com/tkeel-io/security/pkg/apiserver/response"
 	"github.com/tkeel-io/security/pkg/errcode"
 	"github.com/tkeel-io/security/pkg/models/oauth"
+
+	"github.com/emicklei/go-restful"
 )
 
 func Auth() restful.FilterFunction {
-
 	return func(req *restful.Request, resp *restful.Response, chain *restful.FilterChain) {
 		operator := oauth.GetOauthOperator()
+		if operator == nil {
+			_log.Errorf("nil oauth operator")
+		}
 		token, err := operator.ValidationBearerToken(req.Request)
 		if err != nil {
 			_log.Error(err)
@@ -30,12 +33,6 @@ func Auth() restful.FilterFunction {
 			return
 		}
 
-		//cli, err := operator.Manager.GetClient(req.Request.Context(), token.GetClientID())
-		//if err != nil {
-		//	_log.Error(err)
-		//	response.SrvErrWithRest(resp, errcode.ErrInternalServer, nil)
-		//	return
-		//}
 		req.SetAttribute("userID", token.GetUserID())
 		chain.ProcessFilter(req, resp)
 	}

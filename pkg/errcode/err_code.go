@@ -12,11 +12,14 @@ limitations under the License.
 */
 package errcode
 
+// Define ErrCode above 10000 and its meaning,Except 0 is serve Success.
+// The range used by the client is 700~10000.
+// the HTTP status code 0~700 is compatible.
 const (
 	// CodeSuccess.
 	CodeSuccess = 0
-	// CodeInternalServer.
-	CodeInternalServer = iota + 10000
+	// CodeUnexpectedError.
+	CodeUnexpectedError = iota + 10000
 	CodeInvalidAccessToken
 	CodeInvalidParam
 	CodeGenToken
@@ -27,6 +30,7 @@ const (
 	CodeResourceExisted
 )
 const (
+	// ErrMsgOK .
 	ErrMsgOK = "ok"
 )
 
@@ -34,8 +38,8 @@ const (
 var (
 	// SuccessServe.
 	SuccessServe = NewError(CodeSuccess, ErrMsgOK)
-	// ErrInternalServer.
-	ErrInternalServer       = NewError(CodeInternalServer, "internal server error")
+	// ErrInUnexpected.
+	ErrInUnexpected         = NewError(CodeUnexpectedError, "unexpected server error")
 	ErrInvalidAccessRequest = NewError(CodeInvalidAccessToken, "invalid access request")
 	ErrInvalidParam         = NewError(CodeInvalidParam, "invalid param")
 	ErrInDatabase           = NewError(CodeDatabaseErr, "database err")

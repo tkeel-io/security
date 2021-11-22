@@ -14,9 +14,10 @@ package oauth
 
 import (
 	"context"
-	"github.com/golang-jwt/jwt"
 	"reflect"
 	"testing"
+
+	"github.com/golang-jwt/jwt"
 )
 
 func TestJWTAccessGenerate_Token(t *testing.T) {

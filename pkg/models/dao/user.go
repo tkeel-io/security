@@ -42,9 +42,9 @@ func (u *User) Encrypt() (err error) {
 	var hash []byte
 	if hash, err = bcrypt.GenerateFromPassword([]byte(u.Password), bcrypt.DefaultCost); err != nil {
 		return
-	} else {
-		u.Password = string(hash)
 	}
+	u.Password = string(hash)
+
 	return
 }
 
@@ -82,7 +82,7 @@ func (u *User) Delete() error {
 	return nil
 }
 
-// todo fix page.
+// QueryByCondition query by condition (todo fix page).
 func (u *User) QueryByCondition(condition map[string]interface{}) (users []*User, err error) {
 	if condition == nil {
 		return nil, errors.New("query user condition is empty")
