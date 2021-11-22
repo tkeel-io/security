@@ -38,7 +38,7 @@ func (e SrvError) Error() string {
 	return fmt.Sprintf("code：%d, msg:：%s", e.Code(), e.Msg())
 }
 
-// Authenticate return error code.
+// Code Authenticate return error code.
 func (e *SrvError) Code() int {
 	return e.code
 }

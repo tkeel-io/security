@@ -16,6 +16,7 @@ import (
 	"context"
 	"encoding/base64"
 	"errors"
+	"fmt"
 	"strings"
 	"time"
 
@@ -27,7 +28,7 @@ import (
 type EntityClaims struct {
 	Audience   string `json:"aud,omitempty"`
 	ExpiresAt  int64  `json:"exp,omitempty"`
-	Id         string `json:"jti,omitempty"`
+	ID         string `json:"jti,omitempty"`
 	IssuedAt   int64  `json:"iat,omitempty"`
 	Issuer     string `json:"iss,omitempty"`
 	NotBefore  int64  `json:"nbf,omitempty"`
@@ -70,13 +71,13 @@ func (a *JWTAccessGenerate) Token(ctx context.Context, data *jwt.MapClaims, isGe
 	if a.isEs() {
 		v, err := jwt.ParseECPrivateKeyFromPEM(a.SignedKey)
 		if err != nil {
-			return "", "", err
+			return "", "", fmt.Errorf("ParseECPrivateKeyFromPEM %w", err)
 		}
 		key = v
 	} else if a.isRsOrPS() {
 		v, err := jwt.ParseRSAPrivateKeyFromPEM(a.SignedKey)
 		if err != nil {
-			return "", "", err
+			return "", "", fmt.Errorf("ParseRSAPrivateKeyFromPEM %w", err)
 		}
 		key = v
 	} else if a.isHs() {
@@ -87,7 +88,7 @@ func (a *JWTAccessGenerate) Token(ctx context.Context, data *jwt.MapClaims, isGe
 
 	access, err := token.SignedString(key)
 	if err != nil {
-		return "", "", err
+		return "", "", fmt.Errorf("SignedString %w", err)
 	}
 	refresh := ""
 

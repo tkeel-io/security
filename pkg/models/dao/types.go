@@ -21,7 +21,7 @@ import (
 )
 
 const (
-	// DefaultPageNum.
+	// DefaultPageNum 15.
 	DefaultPageNum = 15
 	_userPrefix    = "usr"
 	_defaultLen    = 16

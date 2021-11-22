@@ -14,18 +14,18 @@ package v1
 
 import (
 	"fmt"
-	"github.com/tkeel-io/security/pkg/models/rbac"
 	"strconv"
 
 	"github.com/tkeel-io/security/pkg/apiserver/response"
 	"github.com/tkeel-io/security/pkg/errcode"
 	"github.com/tkeel-io/security/pkg/logger"
 	"github.com/tkeel-io/security/pkg/models/dao"
+	"github.com/tkeel-io/security/pkg/models/rbac"
 
 	"github.com/emicklei/go-restful"
 )
 
-var _log = logger.NewLogger("apirouter.tenant")
+var _log = logger.NewLogger("auth.apirouter.tenantV1")
 
 type tenantHandler struct{}
 
@@ -54,7 +54,7 @@ func (h *tenantHandler) Create(req *restful.Request, resp *restful.Response) {
 	}
 	if err = tenant.Create(); err != nil {
 		_log.Error(err)
-		response.SrvErrWithRest(resp, errcode.ErrInternalServer, nil)
+		response.SrvErrWithRest(resp, errcode.ErrInUnexpected, nil)
 		return
 	}
 	out = &TenantCreateOut{

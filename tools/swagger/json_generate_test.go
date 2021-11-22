@@ -13,10 +13,11 @@ limitations under the License.
 package swagger
 
 import (
-	"github.com/emicklei/go-restful"
-	restfulspec "github.com/emicklei/go-restful-openapi"
 	"reflect"
 	"testing"
+
+	"github.com/emicklei/go-restful"
+	restfulspec "github.com/emicklei/go-restful-openapi"
 )
 
 func TestGenerateSwaggerJSON(t *testing.T) {

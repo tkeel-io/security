@@ -13,11 +13,12 @@ limitations under the License.
 package v1
 
 import (
-	"github.com/emicklei/go-restful"
-	restfulspec "github.com/emicklei/go-restful-openapi"
 	"github.com/tkeel-io/security/pkg/apiserver/config"
 	"github.com/tkeel-io/security/pkg/apiserver/filters"
 	"github.com/tkeel-io/security/pkg/constants"
+
+	"github.com/emicklei/go-restful"
+	restfulspec "github.com/emicklei/go-restful-openapi"
 )
 
 func AddToRestContainer(c *restful.Container, conf *config.EntityConfig) error {

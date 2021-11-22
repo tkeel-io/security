@@ -13,9 +13,9 @@ limitations under the License.
 package v1
 
 import (
-	"github.com/tkeel-io/security/pkg/apiserver/config"
 	"net/http"
 
+	"github.com/tkeel-io/security/pkg/apiserver/config"
 	"github.com/tkeel-io/security/pkg/apiserver/filters"
 	"github.com/tkeel-io/security/pkg/constants"
 	"github.com/tkeel-io/security/pkg/errcode"
@@ -24,7 +24,6 @@ import (
 	restfulspec "github.com/emicklei/go-restful-openapi"
 )
 
-// register
 func RegisterToRestContainer(c *restful.Container, conf *config.RBACConfig) error {
 	var webservice *restful.WebService
 	for _, v := range c.RegisteredWebServices() {

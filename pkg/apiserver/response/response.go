@@ -49,6 +49,7 @@ func SrvErrWithWriter(w http.ResponseWriter, err *errcode.SrvError, data interfa
 		Msg:  err.Msg(),
 		Data: data,
 	}
+
 	respBytes, _ := json.Marshal(resp)
 	w.Header().Set("Content-Type", "application/json")
 	w.Write(respBytes)

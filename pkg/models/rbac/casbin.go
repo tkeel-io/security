@@ -14,12 +14,15 @@ package rbac
 
 import (
 	"fmt"
+
 	"github.com/tkeel-io/security/pkg/apiserver/config"
 	"github.com/tkeel-io/security/pkg/logger"
 
 	"github.com/casbin/casbin/v2"
 	"github.com/casbin/casbin/v2/model"
+
 	xormadapter "github.com/casbin/xorm-adapter/v2"
+	// _ init sql driver in rbac model.
 	_ "github.com/go-sql-driver/mysql"
 )
 
@@ -29,7 +32,7 @@ var (
 )
 
 func NewSyncedEnforcer(conf *config.MysqlConf) (enforcer *casbin.SyncedEnforcer, err error) {
-	dataSourceName := fmt.Sprintf("%s:%s@tcp(%s:%s)/%s", conf.User, conf.Password, conf.Host, conf.Port, conf.DBName) // "root:123456@tcp(139.198.108.153:3306)/tkeelauth"
+	dataSourceName := fmt.Sprintf("%s:%s@tcp(%s:%s)/%s", conf.User, conf.Password, conf.Host, conf.Port, conf.DBName)
 	adapter, err := xormadapter.NewAdapter("mysql", dataSourceName, true)
 	if err != nil {
 		_log.Error(err)
@@ -53,7 +56,7 @@ func NewSyncedEnforcer(conf *config.MysqlConf) (enforcer *casbin.SyncedEnforcer,
 	}
 	_enforcer.EnableLog(true)
 
-	return _enforcer, err
+	return _enforcer, nil
 }
 
 func AddGroupingPolicy(gPolicy *GroupingPolicy) (ok bool, err error) {

@@ -23,7 +23,7 @@ import (
 	"github.com/go-oauth2/oauth2/v4/server"
 )
 
-var _log = logger.NewLogger("auth.apirouter")
+var _log = logger.NewLogger("auth.apirouter.oauthV1")
 
 type oauthHandler struct {
 	operator *server.Server
@@ -59,7 +59,6 @@ func (h *oauthHandler) Login(req *restful.Request, resp *restful.Response) {
 }
 
 func (h *oauthHandler) OnCode(req *restful.Request, resp *restful.Response) {
-
 	response.SrvErrWithRest(resp, errcode.SuccessServe, req.Request.RequestURI)
 }
 
@@ -74,7 +73,7 @@ func (h *oauthHandler) CheckAuth(req *restful.Request, resp *restful.Response) {
 	cli, err := h.operator.Manager.GetClient(req.Request.Context(), token.GetClientID())
 	if err != nil {
 		_log.Error(err)
-		response.SrvErrWithRest(resp, errcode.ErrInternalServer, nil)
+		response.SrvErrWithRest(resp, errcode.ErrInUnexpected, nil)
 		return
 	}
 
@@ -100,7 +99,7 @@ func (h *oauthHandler) Authenticate(req *restful.Request, resp *restful.Response
 	cli, err := h.operator.Manager.GetClient(req.Request.Context(), token.GetClientID())
 	if err != nil {
 		_log.Error(err)
-		response.SrvErrWithRest(resp, errcode.ErrInternalServer, nil)
+		response.SrvErrWithRest(resp, errcode.ErrInUnexpected, nil)
 		return
 	}
 
