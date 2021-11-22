@@ -13,9 +13,9 @@ limitations under the License.
 package v1
 
 import (
-	"github.com/tkeel-io/security/pkg/apiserver/config"
 	"strings"
 
+	"github.com/tkeel-io/security/pkg/apiserver/config"
 	"github.com/tkeel-io/security/pkg/apiserver/response"
 	"github.com/tkeel-io/security/pkg/errcode"
 	"github.com/tkeel-io/security/pkg/logger"
@@ -25,7 +25,7 @@ import (
 	"github.com/emicklei/go-restful"
 )
 
-var _log = logger.NewLogger("auth.models.rbac")
+var _log = logger.NewLogger("auth.apirouter.rbacV1")
 
 type rbacHandler struct {
 	operator *casbin.SyncedEnforcer
@@ -46,7 +46,7 @@ func (h *rbacHandler) AddRoleInDomain(req *restful.Request, resp *restful.Respon
 		in  AddRoleInDomainIn
 	)
 	tenantID := req.PathParameter("tenant_id")
-	userID := req.Attribute("userID").(string)
+	userID, _ := req.Attribute("userID").(string)
 	err = req.ReadEntity(&in)
 	if err != nil || len(tenantID) == 0 || len(in.Role) == 0 {
 		response.SrvErrWithRest(resp, errcode.ErrInvalidParam, nil)
@@ -61,7 +61,7 @@ func (h *rbacHandler) AddRoleInDomain(req *restful.Request, resp *restful.Respon
 		return
 	}
 	_log.Error(err)
-	response.SrvErrWithRest(resp, errcode.ErrInternalServer, nil)
+	response.SrvErrWithRest(resp, errcode.ErrInUnexpected, nil)
 }
 
 func (h *rbacHandler) DeleteRoleInDomain(req *restful.Request, resp *restful.Response) {
@@ -80,7 +80,7 @@ func (h *rbacHandler) DeleteRoleInDomain(req *restful.Request, resp *restful.Res
 
 func (h *rbacHandler) RolesInDomain(req *restful.Request, resp *restful.Response) {
 	tenantID := req.PathParameter("tenant_id")
-	userID := req.Attribute("userID").(string)
+	userID, _ := req.Attribute("userID").(string)
 	_log.Info(h.operator.GetAllRoles())
 	roles := h.operator.GetRolesForUserInDomain(userID, tenantID)
 	response.SrvErrWithRest(resp, errcode.SuccessServe, roles)
@@ -101,7 +101,7 @@ func (h *rbacHandler) AddPermissionInRole(req *restful.Request, resp *restful.Re
 	ok, err = h.operator.AddPolicy(role, tenantID, in.PermissionObject, in.PermissionAction)
 	if err != nil {
 		_log.Error(err)
-		response.SrvErrWithRest(resp, errcode.ErrInternalServer, nil)
+		response.SrvErrWithRest(resp, errcode.ErrInUnexpected, nil)
 		return
 	}
 	response.SrvErrWithRest(resp, errcode.SuccessServe, ok)
@@ -123,7 +123,7 @@ func (h *rbacHandler) DeletePermissionInRole(req *restful.Request, resp *restful
 	ok, err = h.operator.RemovePolicy(role, tenantID, permissionObject, permissionAction)
 	if err != nil {
 		_log.Error(err)
-		response.SrvErrWithRest(resp, errcode.ErrInternalServer, nil)
+		response.SrvErrWithRest(resp, errcode.ErrInUnexpected, nil)
 		return
 	}
 	response.SrvErrWithRest(resp, errcode.SuccessServe, ok)
@@ -151,7 +151,7 @@ func (h *rbacHandler) AddRoleToUser(req *restful.Request, resp *restful.Response
 	ok, err = h.operator.AddGroupingPolicies(groupingPolices)
 	if err != nil || !ok {
 		_log.Error(err)
-		response.SrvErrWithRest(resp, errcode.ErrInternalServer, nil)
+		response.SrvErrWithRest(resp, errcode.ErrInUnexpected, nil)
 	}
 	response.SrvErrWithRest(resp, errcode.SuccessServe, groupingPolices)
 }
@@ -167,24 +167,24 @@ func (h *rbacHandler) DeleteRoleOnUser(req *restful.Request, resp *restful.Respo
 	ok, err = h.operator.DeleteRoleForUserInDomain(userID, role, tenantID)
 	if err != nil {
 		_log.Error(err)
-		response.SrvErrWithRest(resp, errcode.ErrInternalServer, nil)
+		response.SrvErrWithRest(resp, errcode.ErrInUnexpected, nil)
 		return
 	}
 	response.SrvErrWithRest(resp, errcode.SuccessServe, ok)
 }
 
 func (h *rbacHandler) UserPermissions(req *restful.Request, resp *restful.Response) {
-	var out []UserPermission
 	tenantID := req.PathParameter("tenant_id")
 	userID := req.PathParameter("user_id")
 	permissions := h.operator.GetPermissionsForUserInDomain(userID, tenantID)
+	out := make([]UserPermission, len(permissions))
 	for i := range permissions {
 		permissionItem := UserPermission{
 			Role:             permissions[i][0],
 			PermissionObject: permissions[i][2],
 			PermissionAction: permissions[i][3],
 		}
-		out = append(out, permissionItem)
+		out[i] = permissionItem
 	}
 
 	response.SrvErrWithRest(resp, errcode.SuccessServe, out)

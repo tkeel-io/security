@@ -13,15 +13,16 @@ limitations under the License.
 package v1
 
 import (
-	"github.com/emicklei/go-restful"
+	"strconv"
+	"time"
+
 	"github.com/tkeel-io/security/pkg/apiserver/config"
 	"github.com/tkeel-io/security/pkg/apiserver/response"
 	"github.com/tkeel-io/security/pkg/errcode"
 	"github.com/tkeel-io/security/pkg/logger"
 	"github.com/tkeel-io/security/pkg/models/oauth"
-	"strconv"
-	"time"
 
+	"github.com/emicklei/go-restful"
 	"github.com/golang-jwt/jwt"
 )
 
@@ -83,7 +84,7 @@ func (h *entityHandler) TokenValid(req *restful.Request, resp *restful.Response)
 	claims, err := h.tokenOperator.Valid(in.EntityToken)
 	if err != nil {
 		_log.Error(err)
-		response.SrvErrWithRest(resp, errcode.ErrInternalServer, nil)
+		response.SrvErrWithRest(resp, errcode.ErrInUnexpected, nil)
 		return
 	}
 	response.SrvErrWithRest(resp, errcode.SuccessServe, claims)

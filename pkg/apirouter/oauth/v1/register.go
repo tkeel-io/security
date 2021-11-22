@@ -13,6 +13,8 @@ limitations under the License.
 package v1
 
 import (
+	"fmt"
+
 	"github.com/tkeel-io/security/pkg/apiserver/config"
 	"github.com/tkeel-io/security/pkg/apiserver/filters"
 	"github.com/tkeel-io/security/pkg/constants"
@@ -42,7 +44,7 @@ func AddToRestContainer(c *restful.Container, conf *config.OAuth2Config) error {
 	oauthOperator, err := oauth.NewOperator(conf)
 	if err != nil {
 		_log.Error(err)
-		return err
+		return fmt.Errorf("oauth new operate %w", err)
 	}
 	handler := newOauthHandler(oauthOperator)
 

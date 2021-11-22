@@ -147,7 +147,7 @@ func TestJSONLoggerFields(t *testing.T) {
 			var o map[string]interface{}
 			assert.NoError(t, json.Unmarshal(b, &o))
 
-			// assert
+			// assert.
 			assert.Equal(t, tt.appID, o[logFieldAppID])
 			assert.Equal(t, tt.instance, o[logFieldInstance])
 			assert.Equal(t, tt.level, o[logFieldLevel])
@@ -168,7 +168,7 @@ func TestWithTypeFields(t *testing.T) {
 	testLogger.SetOutputLevel(InfoLevel)
 
 	// WithLogType will return new Logger with types log type
-	// Meanwhile, testLogger uses the default logtype
+	// Meanwhile, testLogger uses the default logtype.
 	loggerWithRequestType := testLogger.WithLogType(LogTypeRequest)
 	loggerWithRequestType.Info("call user app")
 
@@ -178,7 +178,7 @@ func TestWithTypeFields(t *testing.T) {
 
 	assert.Equalf(t, LogTypeRequest, o[logFieldType], "new logger must be %s type", LogTypeRequest)
 
-	// Log our via testLogger to ensure that testLogger still uses the default logtype
+	// Log our via testLogger to ensure that testLogger still uses the default logtype.
 	testLogger.Info("testLogger with log LogType")
 
 	b, _ = buf.ReadBytes('\n')

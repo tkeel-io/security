@@ -47,7 +47,7 @@ func GenerateSwaggerJSON(c *restful.Container, f restfulspec.PostBuildSwaggerObj
 
 	data, _ := json.MarshalIndent(swagger, "", "  ")
 	if len(output) != 0 {
-		err := ioutil.WriteFile(output, data, 420)
+		err := ioutil.WriteFile(output, data, 0600)
 		if err != nil {
 			log.Fatal(err)
 		}
@@ -80,7 +80,7 @@ func GenAuthSwaggerObjectFunc() restfulspec.PostBuildSwaggerObjectFunc {
 			},
 		}
 
-		// setup security definitions
+		// setup security definitions.
 		swo.SecurityDefinitions = map[string]*spec.SecurityScheme{
 			"jwt": spec.APIKeyAuth("Authorization", "header"),
 		}
@@ -93,7 +93,7 @@ func ValidateSpec(apiSpec []byte) error {
 	if err != nil {
 		return fmt.Errorf("swagger dpc analyzed err : %w", err)
 	}
-	// Attempts to report about all errors
+	// Attempts to report about all errors.
 	validate.SetContinueOnErrors(true)
 	v := validate.NewSpecValidator(swaggerDoc.Schema(), strfmt.Default)
 	result, _ := v.Validate(swaggerDoc)

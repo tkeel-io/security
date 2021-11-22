@@ -12,18 +12,9 @@ limitations under the License.
 */
 package v1
 
-const (
-	PluginPolicy PolicyType = "plugin"
-	ApiPolicy    PolicyType = "api"
-	DevicePolicy PolicyType = "device"
-	RoleAdmin               = "admin"
-)
-
 type AddRoleInDomainIn struct {
 	Role string `json:"role"`
 }
-
-type PolicyType string
 
 type AddPermissionIn struct {
 	PermissionObject string `json:"permission_object"`

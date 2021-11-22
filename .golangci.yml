@@ -221,10 +221,10 @@ linters-settings:
 #    # check the struck tag name case
 #    case:
 #      # use the struct field name to check the name of the struct tag
-#      use-field-name: true
+#      use-field-name: false
 #      rules:
-#        # any struct tag type can be used.
-#        # support string case: `camel`, `pascal`, `kebab`, `snake`, `goCamel`, `goPascal`, `goKebab`, `goSnake`, `upper`, `lower`
+        # any struct tag type can be used.
+        # support string case: `camel`, `pascal`, `kebab`, `snake`, `goCamel`, `goPascal`, `goKebab`, `goSnake`, `upper`, `lower`
 #        json: snake
 #        yaml: camel
 #        xml: kebab
@@ -237,6 +237,7 @@ linters:
   enable-all: true
   disable:
     # TODO Enforce the below linters later
+    - tagliatelle
     - dupl
     - errcheck
     - funlen
