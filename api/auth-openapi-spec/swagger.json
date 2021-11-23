@@ -518,7 +518,7 @@
         }
       }
     },
-    "/v1/tenant/tenant/users": {
+    "/v1/tenant/users": {
       "get": {
         "produces": [
           "application/json"
@@ -569,7 +569,7 @@
         }
       }
     },
-    "/v1/tenant/tenant/users/{user_id}": {
+    "/v1/tenant/users/{user_id}": {
       "delete": {
         "produces": [
           "application/json"
@@ -594,7 +594,7 @@
         }
       }
     },
-    "/v1/tenant/tenant/{tenant_id}": {
+    "/v1/tenant/{tenant_id}": {
       "delete": {
         "produces": [
           "application/json"
