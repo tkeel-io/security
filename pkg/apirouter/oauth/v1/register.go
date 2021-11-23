@@ -15,8 +15,8 @@ package v1
 import (
 	"fmt"
 
+	"github.com/tkeel-io/security/pkg/apirouter"
 	"github.com/tkeel-io/security/pkg/apiserver/config"
-	"github.com/tkeel-io/security/pkg/apiserver/filters"
 	"github.com/tkeel-io/security/pkg/constants"
 	"github.com/tkeel-io/security/pkg/models/oauth"
 
@@ -25,21 +25,7 @@ import (
 )
 
 func AddToRestContainer(c *restful.Container, conf *config.OAuth2Config) error {
-	var webservice *restful.WebService
-	for _, v := range c.RegisteredWebServices() {
-		if v.RootPath() == "v1" {
-			webservice = v
-			break
-		}
-	}
-	if webservice == nil {
-		webservice = &restful.WebService{}
-		webservice.Path("v1").
-			Produces(restful.MIME_JSON).
-			Filter(filters.Auth())
-
-		c.Add(webservice)
-	}
+	webservice := apirouter.GetWebserviceWithPatch(c, "/v1/oauth")
 
 	oauthOperator, err := oauth.NewOperator(conf)
 	if err != nil {
@@ -48,19 +34,19 @@ func AddToRestContainer(c *restful.Container, conf *config.OAuth2Config) error {
 	}
 	handler := newOauthHandler(oauthOperator)
 
-	webservice.Route(webservice.GET("oauth/authorize").
+	webservice.Route(webservice.GET("/authorize").
 		To(handler.Authorize).
 		Metadata(restfulspec.KeyOpenAPITags, []string{constants.APITagOauth}))
 
-	webservice.Route(webservice.GET("oauth/token").
+	webservice.Route(webservice.GET("/token").
 		To(handler.Token).
 		Metadata(restfulspec.KeyOpenAPITags, []string{constants.APITagOauth}))
 
-	webservice.Route(webservice.GET("oauth/authenticate").
+	webservice.Route(webservice.GET("/authenticate").
 		To(handler.Authenticate).
 		Metadata(restfulspec.KeyOpenAPITags, []string{constants.APITagOauth}))
 
-	webservice.Route(webservice.GET("oauth/on_code").
+	webservice.Route(webservice.GET("/on_code").
 		To(handler.OnCode).
 		Metadata(restfulspec.KeyOpenAPITags, []string{constants.APITagOauth}))
 

@@ -20,7 +20,6 @@ var (
 func SetUp(conf *config.MysqlConf) {
 	var err error
 	dsn := fmt.Sprintf("%s:%s@tcp(%s:%s)/%s?charset=utf8mb4&parseTime=True&loc=Local", conf.User, conf.Password, conf.Host, conf.Port, conf.DBName)
-	_log.Info(dsn)
 	_dbOnce.Do(func() {
 		_db, err = gorm.Open(mysql.Open(dsn), &gorm.Config{
 			DisableForeignKeyConstraintWhenMigrating: true,

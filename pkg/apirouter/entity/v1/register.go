@@ -13,6 +13,7 @@ limitations under the License.
 package v1
 
 import (
+	"github.com/tkeel-io/security/pkg/apirouter"
 	"github.com/tkeel-io/security/pkg/apiserver/config"
 	"github.com/tkeel-io/security/pkg/apiserver/filters"
 	"github.com/tkeel-io/security/pkg/constants"
@@ -22,25 +23,12 @@ import (
 )
 
 func AddToRestContainer(c *restful.Container, conf *config.EntityConfig) error {
-	var webservice *restful.WebService
-	for _, v := range c.RegisteredWebServices() {
-		if v.RootPath() == "v1" {
-			webservice = v
-			break
-		}
-	}
-	if webservice == nil {
-		webservice = &restful.WebService{}
-		webservice.Path("v1").
-			Produces(restful.MIME_JSON).
-			Filter(filters.Auth())
-
-		c.Add(webservice)
-	}
-
+	webservice := apirouter.GetWebserviceWithPatch(c, "/v1/entity")
 	handler := newEntityHandler(conf)
 
-	webservice.Route(webservice.GET("entity/{entity_type}/{entity_id}/token").
+	webservice.Filter(filters.Auth())
+
+	webservice.Route(webservice.GET("/{entity_type}/{entity_id}/token").
 		To(handler.Token).
 		Doc("get a entity token").
 		Param(webservice.PathParameter("entity_type", "EntityType")).
@@ -48,7 +36,7 @@ func AddToRestContainer(c *restful.Container, conf *config.EntityConfig) error {
 		Param(webservice.QueryParameter("expires_in", "invalid period( seconds )")).
 		Metadata(restfulspec.KeyOpenAPITags, []string{constants.APITagEntity}))
 
-	webservice.Route(webservice.POST("entity/token/valid").
+	webservice.Route(webservice.POST("/token/valid").
 		To(handler.TokenValid).
 		Doc("valid a entity token").
 		Reads(TokenValidIn{}).

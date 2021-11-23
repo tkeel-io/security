@@ -64,7 +64,7 @@ func (h *entityHandler) Token(req *restful.Request, resp *restful.Response) {
 	out.Token, _, err = h.tokenOperator.Token(req.Request.Context(), &claims, false)
 	if err != nil {
 		_log.Error(err)
-		response.SrvErrWithRest(resp, errcode.ErrGenToken, nil)
+		response.SrvErrWithRest(resp, errcode.ErrInGenToken, nil)
 		return
 	}
 	response.SrvErrWithRest(resp, errcode.SuccessServe, out)
