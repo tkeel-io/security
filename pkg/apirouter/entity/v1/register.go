@@ -22,7 +22,7 @@ import (
 	restfulspec "github.com/emicklei/go-restful-openapi"
 )
 
-func AddToRestContainer(c *restful.Container, conf *config.EntityConfig) error {
+func RegisterToRestContainer(c *restful.Container, conf *config.EntityConfig) error {
 	webservice := apirouter.GetWebserviceWithPatch(c, "/v1/entity")
 	handler := newEntityHandler(conf)
 

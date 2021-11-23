@@ -76,10 +76,10 @@ func (s *APIServer) PrepareRun(stopCh <-chan struct{}) error {
 
 func (s *APIServer) installApis() {
 	s.restContainer.Filter(filters.GlobalLog())
-	must(oauthV1.AddToRestContainer(s.restContainer, s.Config.Oauth2))
+	must(oauthV1.RegisterToRestContainer(s.restContainer, s.Config.Oauth2))
 	must(rbacrouter.RegisterToRestContainer(s.restContainer, s.Config.RBAC))
-	must(tenantrouter.AddToRestContainer(s.restContainer))
-	must(entityrouter.AddToRestContainer(s.restContainer, s.Config.Entity))
+	must(tenantrouter.RegisterToRestContainer(s.restContainer))
+	must(entityrouter.RegisterToRestContainer(s.restContainer, s.Config.Entity))
 }
 
 func must(err error) {

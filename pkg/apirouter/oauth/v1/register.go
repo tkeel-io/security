@@ -24,7 +24,7 @@ import (
 	restfulspec "github.com/emicklei/go-restful-openapi"
 )
 
-func AddToRestContainer(c *restful.Container, conf *config.OAuth2Config) error {
+func RegisterToRestContainer(c *restful.Container, conf *config.OAuth2Config) error {
 	webservice := apirouter.GetWebserviceWithPatch(c, "/v1/oauth")
 
 	oauthOperator, err := oauth.NewOperator(conf)
