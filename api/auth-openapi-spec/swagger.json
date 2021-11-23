@@ -619,6 +619,41 @@
           }
         }
       }
+    },
+    "/v1/tenants": {
+      "get": {
+        "produces": [
+          "application/json"
+        ],
+        "tags": [
+          "Tenant"
+        ],
+        "summary": "get tenants",
+        "operationId": "Query",
+        "parameters": [
+          {
+            "type": "string",
+            "name": "tenant_id",
+            "in": "query"
+          },
+          {
+            "type": "string",
+            "name": "title",
+            "in": "query"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "ok",
+            "schema": {
+              "type": "array",
+              "items": {
+                "$ref": "#/definitions/*dao.Tenant"
+              }
+            }
+          }
+        }
+      }
     }
   },
   "definitions": {
