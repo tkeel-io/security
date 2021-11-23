@@ -24,7 +24,7 @@ import (
 	restfulspec "github.com/emicklei/go-restful-openapi"
 )
 
-func AddToRestContainer(c *restful.Container) error {
+func RegisterToRestContainer(c *restful.Container) error {
 	webservice := apirouter.GetWebserviceWithPatch(c, "/v1/tenant")
 
 	handler := newTenantHandler()
