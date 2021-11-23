@@ -12,6 +12,8 @@ limitations under the License.
 */
 package errcode
 
+import "net/http"
+
 // Define ErrCode above 10000 and its meaning,Except 0 is serve Success.
 // The range used by the client is 700~10000.
 // the HTTP status code 0~700 is compatible.
@@ -44,8 +46,27 @@ var (
 	ErrInvalidParam         = NewError(CodeInvalidParam, "invalid param")
 	ErrInDatabase           = NewError(CodeDatabaseErr, "database err")
 	ErrInExistedResource    = NewError(CodeResourceExisted, "existed resource")
-	ErrGenToken             = NewError(CodeGenToken, "gen token error")
+	ErrInGenToken           = NewError(CodeGenToken, "gen token error")
 	ErrInvalidToken         = NewError(CodeTokenInvalid, "invalid token")
 	ErrTokenTimeout         = NewError(CodeTokenTimeOut, "token timeout")
 	ErrServiceUnavailable   = NewError(CodeServiceUnavailable, "service unavailable")
 )
+
+func CodeToStatus(code int) int {
+	switch code {
+	case CodeSuccess:
+		return http.StatusOK
+	case CodeInvalidAccessToken:
+		return http.StatusUnauthorized
+	case CodeInvalidParam:
+		return http.StatusBadRequest
+	case CodeTokenInvalid:
+		return http.StatusUnauthorized
+	case CodeTokenTimeOut:
+		return http.StatusUnauthorized
+	case CodeServiceUnavailable:
+		return http.StatusServiceUnavailable
+	default:
+		return http.StatusInternalServerError
+	}
+}

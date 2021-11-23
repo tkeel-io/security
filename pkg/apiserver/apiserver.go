@@ -65,7 +65,7 @@ func (s *APIServer) PrepareRun(stopCh <-chan struct{}) error {
 	dao.SetUp(s.Config.Database.Mysql)
 	s.installApis()
 	for _, webservice := range s.restContainer.RegisteredWebServices() {
-		_log.Infof("%s", webservice.RootPath())
+		_log.Infof("registered root patch: %s", webservice.RootPath())
 	}
 	s.Server.Handler = s.restContainer
 

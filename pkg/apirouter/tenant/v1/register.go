@@ -15,6 +15,7 @@ package v1
 import (
 	"net/http"
 
+	"github.com/tkeel-io/security/pkg/apirouter"
 	"github.com/tkeel-io/security/pkg/constants"
 	"github.com/tkeel-io/security/pkg/errcode"
 	"github.com/tkeel-io/security/pkg/models/dao"
@@ -24,31 +25,18 @@ import (
 )
 
 func AddToRestContainer(c *restful.Container) error {
-	var webservice *restful.WebService
-	for _, v := range c.RegisteredWebServices() {
-		if v.RootPath() == "v1" {
-			webservice = v
-			break
-		}
-	}
-	if webservice == nil {
-		webservice = &restful.WebService{}
-		webservice.Path("v1").
-			Produces(restful.MIME_JSON)
-
-		c.Add(webservice)
-	}
+	webservice := apirouter.GetWebserviceWithPatch(c, "/v1/tenant")
 
 	handler := newTenantHandler()
 
-	webservice.Route(webservice.POST("tenant").
+	webservice.Route(webservice.POST("").
 		To(handler.Create).
 		Doc(" Create a tenant").
 		Reads(TenantCreteIn{}).
 		Returns(http.StatusOK, errcode.ErrMsgOK, TenantCreateOut{}).
 		Metadata(restfulspec.KeyOpenAPITags, []string{constants.APITagTenant}))
 
-	webservice.Route(webservice.GET("tenants").
+	webservice.Route(webservice.GET("").
 		To(handler.Query).
 		Doc("get tenants").
 		Param(webservice.QueryParameter("tenant_id", "").Required(false)).
@@ -56,27 +44,27 @@ func AddToRestContainer(c *restful.Container) error {
 		Returns(http.StatusOK, errcode.ErrMsgOK, []*dao.Tenant{}).
 		Metadata(restfulspec.KeyOpenAPITags, []string{constants.APITagTenant}))
 
-	webservice.Route(webservice.DELETE("tenant/{tenant_id}").
+	webservice.Route(webservice.DELETE("/tenant/{tenant_id}").
 		To(handler.Delete).
 		Doc("delete a tenant").
 		Param(webservice.PathParameter("tenant_id", "tenant's ID").Required(true)).
 		Returns(http.StatusOK, errcode.ErrMsgOK, nil).
 		Metadata(restfulspec.KeyOpenAPITags, []string{constants.APITagTenant}))
 
-	webservice.Route(webservice.POST("tenant/users").
+	webservice.Route(webservice.POST("/tenant/users").
 		To(handler.UserCreate).
 		Doc("create a user").
 		Reads(UserCreateIn{}).
 		Returns(http.StatusOK, errcode.ErrMsgOK, dao.User{}).
 		Metadata(restfulspec.KeyOpenAPITags, []string{constants.APITagTenant}))
 
-	webservice.Route(webservice.GET("tenant/users").
+	webservice.Route(webservice.GET("/tenant/users").
 		To(handler.UserQuery).
 		Doc("get users").
 		Returns(http.StatusOK, errcode.ErrMsgOK, []dao.User{}).
 		Metadata(restfulspec.KeyOpenAPITags, []string{constants.APITagTenant}))
 
-	webservice.Route(webservice.DELETE("tenant/users/{user_id}").
+	webservice.Route(webservice.DELETE("/tenant/users/{user_id}").
 		To(handler.UserDelete).
 		Doc("delete a  users").
 		Param(webservice.PathParameter("user_id", "").Required(true)).

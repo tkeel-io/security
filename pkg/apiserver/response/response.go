@@ -27,35 +27,38 @@ type responseData struct {
 	Data interface{} `json:"data"`
 }
 
-func SrvErrWithRest(resp *restful.Response, err *errcode.SrvError, data interface{}) {
-	resp.WriteEntity(responseData{
-		Code: err.Code(),
-		Msg:  err.Msg(),
+func SrvErrWithRest(resp *restful.Response, srvErr *errcode.SrvError, data interface{}) {
+	status := errcode.CodeToStatus(srvErr.Code())
+	resp.WriteHeaderAndEntity(status, responseData{
+		Code: srvErr.Code(),
+		Msg:  srvErr.Msg(),
 		Data: data,
 	})
 }
 
-func DefineWithRest(resp *restful.Response, code int, msg string, data interface{}) {
-	resp.WriteEntity(responseData{
+func DefineWithRest(resp *restful.Response, status, code int, msg string, data interface{}) {
+	resp.WriteHeaderAndEntity(status, responseData{
 		Code: code,
 		Msg:  msg,
 		Data: data,
 	})
 }
 
-func SrvErrWithWriter(w http.ResponseWriter, err *errcode.SrvError, data interface{}) {
+func SrvErrWithWriter(w http.ResponseWriter, serErr *errcode.SrvError, data interface{}) {
+	status := errcode.CodeToStatus(serErr.Code())
+	w.WriteHeader(status)
 	resp := responseData{
-		Code: err.Code(),
-		Msg:  err.Msg(),
+		Code: serErr.Code(),
+		Msg:  serErr.Msg(),
 		Data: data,
 	}
-
 	respBytes, _ := json.Marshal(resp)
 	w.Header().Set("Content-Type", "application/json")
 	w.Write(respBytes)
 }
 
-func DefineWithWriter(w http.ResponseWriter, code int, msg string, data interface{}) {
+func DefineWithWriter(w http.ResponseWriter, status, code int, msg string, data interface{}) {
+	w.WriteHeader(status)
 	resp := responseData{
 		Code: code,
 		Msg:  msg,

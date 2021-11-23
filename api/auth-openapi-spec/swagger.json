@@ -456,6 +456,39 @@
       }
     },
     "/v1/tenant": {
+      "get": {
+        "produces": [
+          "application/json"
+        ],
+        "tags": [
+          "Tenant"
+        ],
+        "summary": "get tenants",
+        "operationId": "Query",
+        "parameters": [
+          {
+            "type": "string",
+            "name": "tenant_id",
+            "in": "query"
+          },
+          {
+            "type": "string",
+            "name": "title",
+            "in": "query"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "ok",
+            "schema": {
+              "type": "array",
+              "items": {
+                "$ref": "#/definitions/*dao.Tenant"
+              }
+            }
+          }
+        }
+      },
       "post": {
         "produces": [
           "application/json"
@@ -485,7 +518,7 @@
         }
       }
     },
-    "/v1/tenant/users": {
+    "/v1/tenant/tenant/users": {
       "get": {
         "produces": [
           "application/json"
@@ -536,7 +569,7 @@
         }
       }
     },
-    "/v1/tenant/users/{user_id}": {
+    "/v1/tenant/tenant/users/{user_id}": {
       "delete": {
         "produces": [
           "application/json"
@@ -561,7 +594,7 @@
         }
       }
     },
-    "/v1/tenant/{tenant_id}": {
+    "/v1/tenant/tenant/{tenant_id}": {
       "delete": {
         "produces": [
           "application/json"
@@ -583,41 +616,6 @@
         "responses": {
           "200": {
             "description": "ok"
-          }
-        }
-      }
-    },
-    "/v1/tenants": {
-      "get": {
-        "produces": [
-          "application/json"
-        ],
-        "tags": [
-          "Tenant"
-        ],
-        "summary": "get tenants",
-        "operationId": "Query",
-        "parameters": [
-          {
-            "type": "string",
-            "name": "tenant_id",
-            "in": "query"
-          },
-          {
-            "type": "string",
-            "name": "title",
-            "in": "query"
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "ok",
-            "schema": {
-              "type": "array",
-              "items": {
-                "$ref": "#/definitions/*dao.Tenant"
-              }
-            }
           }
         }
       }

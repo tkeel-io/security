@@ -97,6 +97,7 @@ func (h *rbacHandler) AddPermissionInRole(req *restful.Request, resp *restful.Re
 	err = req.ReadEntity(&in)
 	if err != nil || len(in.PermissionAction) == 0 || len(in.PermissionObject) == 0 {
 		response.SrvErrWithRest(resp, errcode.ErrInvalidParam, nil)
+		return
 	}
 	ok, err = h.operator.AddPolicy(role, tenantID, in.PermissionObject, in.PermissionAction)
 	if err != nil {
