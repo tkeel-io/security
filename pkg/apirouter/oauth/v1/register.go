@@ -40,6 +40,9 @@ func RegisterToRestContainer(c *restful.Container, conf *config.OAuth2Config) er
 
 	webservice.Route(webservice.GET("/token").
 		To(handler.Token).
+		Param(webservice.QueryParameter("grant_type","GrantType:(password/authorization_code)").Required(true)).
+		Param(webservice.QueryParameter("username","user name while GrantType is password,style must be 'tenantID-username'")).
+		Param(webservice.QueryParameter("password","password")).
 		Metadata(restfulspec.KeyOpenAPITags, []string{constants.APITagOauth}))
 
 	webservice.Route(webservice.GET("/authenticate").

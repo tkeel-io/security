@@ -192,7 +192,7 @@ func (h *tenantHandler) UserQuery(req *restful.Request, resp *restful.Response) 
 	tenantID, _ := strconv.Atoi(req.QueryParameter("tenant_id"))
 	userID := req.QueryParameter("user_id")
 	keyWords := req.QueryParameter("key_words")
-	searchKey := req.QueryParameter("searchKey")
+	searchKey := req.QueryParameter("search_key")
 	condition := make(map[string]interface{})
 	if tenantID != 0 {
 		condition["tenant_id"] = tenantID
