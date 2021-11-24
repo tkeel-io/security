@@ -41,20 +41,20 @@ func RegisterToRestContainer(c *restful.Container, conf *config.RBACConfig) erro
 	webservice.Route(webservice.GET("/{tenant_id}/roles").
 		To(handler.RolesInDomain).
 		Doc("Get role list in tenant").
-		Param(webservice.PathParameter("tenant_id", "tenant's ID")).
+		Param(webservice.PathParameter("tenant_id", "tenant`s ID")).
 		Metadata(restfulspec.KeyOpenAPITags, []string{constants.APITagRBAC}))
 
 	webservice.Route(webservice.DELETE("/{tenant_id}/roles/{role}").
 		To(handler.DeleteRoleInDomain).
 		Doc("delete a role in tenant").
-		Param(webservice.PathParameter("tenant_id", "tenant's ID")).
+		Param(webservice.PathParameter("tenant_id", "tenant`s ID")).
 		Param(webservice.PathParameter("role", "role'ID")).
 		Metadata(restfulspec.KeyOpenAPITags, []string{constants.APITagRBAC}))
 
 	webservice.Route(webservice.POST("/{tenant_id}/{role}/permissions").
 		To(handler.AddPermissionInRole).
 		Doc("add permission for role").
-		Param(webservice.PathParameter("tenant_id", "tenant's ID")).
+		Param(webservice.PathParameter("tenant_id", "tenant`s ID")).
 		Param(webservice.PathParameter("role", "role'ID")).
 		Reads(AddPermissionIn{}).
 		Metadata(restfulspec.KeyOpenAPITags, []string{constants.APITagRBAC}))
@@ -62,7 +62,7 @@ func RegisterToRestContainer(c *restful.Container, conf *config.RBACConfig) erro
 	webservice.Route(webservice.DELETE("/{tenant_id}/{role}/permissions").
 		To(handler.DeletePermissionInRole).
 		Doc("delete a permission for role ").
-		Param(webservice.PathParameter("tenant_id", "tenant's ID")).
+		Param(webservice.PathParameter("tenant_id", "tenant`s ID")).
 		Param(webservice.PathParameter("role", "role'ID")).
 		Param(webservice.QueryParameter("permission_object", "permission object")).
 		Param(webservice.QueryParameter("permission_action", "permission action")).
@@ -71,23 +71,23 @@ func RegisterToRestContainer(c *restful.Container, conf *config.RBACConfig) erro
 	webservice.Route(webservice.POST("/{tenant_id}/users/roles").
 		To(handler.AddRoleToUser).
 		Doc("add roles for users").
-		Param(webservice.PathParameter("tenant_id", "tenant's ID")).
+		Param(webservice.PathParameter("tenant_id", "tenants`ID")).
 		Reads(AddRoleInDomainIn{}).
 		Metadata(restfulspec.KeyOpenAPITags, []string{constants.APITagRBAC}))
 
 	webservice.Route(webservice.DELETE("/{tenant_id}/users/{user_id}/roles/{role}").
 		To(handler.DeleteRoleOnUser).
 		Doc("delete a role for user").
-		Param(webservice.PathParameter("tenant_id", "tenant's ID")).
-		Param(webservice.PathParameter("user_id", "user's ID")).
+		Param(webservice.PathParameter("tenant_id", "tenants`ID")).
+		Param(webservice.PathParameter("user_id", "users`ID")).
 		Param(webservice.PathParameter("role", "role")).
 		Metadata(restfulspec.KeyOpenAPITags, []string{constants.APITagRBAC}))
 
 	webservice.Route(webservice.GET("/{tenant_id}/users/{user_id}/permissions").
 		To(handler.UserPermissions).
 		Doc("get user permissions ").
-		Param(webservice.PathParameter("tenant_id", "tenant's ID")).
-		Param(webservice.PathParameter("user_id", "user's ID")).
+		Param(webservice.PathParameter("tenant_id", "tenants`ID")).
+		Param(webservice.PathParameter("user_id", "users`ID")).
 		Metadata(restfulspec.KeyOpenAPITags, []string{constants.APITagRBAC}))
 
 	webservice.Route(webservice.POST("/permission/check").

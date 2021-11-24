@@ -61,6 +61,10 @@ func RegisterToRestContainer(c *restful.Container) error {
 	webservice.Route(webservice.GET("/users").
 		To(handler.UserQuery).
 		Doc("get users").
+		Param(webservice.QueryParameter("tenant_id","tenant`s ID").Required(true)).
+		Param(webservice.QueryParameter("user_id","user`s ID").Required(false)).
+		Param(webservice.QueryParameter("search_key","search by condition").Required(false)).
+		Param(webservice.QueryParameter("key_words","condition`s value").Required(false)).
 		Returns(http.StatusOK, errcode.ErrMsgOK, []dao.User{}).
 		Metadata(restfulspec.KeyOpenAPITags, []string{constants.APITagTenant}))
 
