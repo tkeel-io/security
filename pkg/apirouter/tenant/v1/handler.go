@@ -66,6 +66,7 @@ func (h *tenantHandler) Create(req *restful.Request, resp *restful.Response) {
 	if in.Admin != nil {
 		user := dao.User{
 			ID:       dao.GenUserID(tenant.ID),
+			TenantID: tenant.ID,
 			UserName: in.Admin.UserName,
 			Password: in.Admin.Password,
 			Avatar:   in.Admin.Avatar,

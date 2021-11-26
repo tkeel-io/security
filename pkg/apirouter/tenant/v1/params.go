@@ -14,7 +14,7 @@ package v1
 
 type TenantCreteIn struct {
 	Title  string        `json:"title"`
-	Remark string        `json:"Remark"`
+	Remark string        `json:"remark"`
 	Admin  *UserCreateIn `json:"admin"`
 }
 type TenantCreateOut struct {

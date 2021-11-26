@@ -28,10 +28,10 @@ import (
 
 var (
 	_log      = logger.NewLogger("auth.models.rbac")
-	_enforcer *casbin.SyncedEnforcer
+	_enforcer *casbin.Enforcer
 )
 
-func NewSyncedEnforcer(conf *config.MysqlConf) (enforcer *casbin.SyncedEnforcer, err error) {
+func NewRBACOperator(conf *config.MysqlConf) (enforcer *casbin.Enforcer, err error) {
 	dataSourceName := fmt.Sprintf("%s:%s@tcp(%s:%s)/%s", conf.User, conf.Password, conf.Host, conf.Port, conf.DBName)
 	adapter, err := xormadapter.NewAdapter("mysql", dataSourceName, true)
 	if err != nil {
@@ -44,7 +44,7 @@ func NewSyncedEnforcer(conf *config.MysqlConf) (enforcer *casbin.SyncedEnforcer,
 		return
 	}
 
-	_enforcer, err = casbin.NewSyncedEnforcer(casbinModel, adapter)
+	_enforcer, err = casbin.NewEnforcer(casbinModel, adapter)
 	if err != nil {
 		_log.Error(err)
 		return
@@ -90,4 +90,8 @@ func Enforce(r *RequestPolicy) (ok bool, err error) {
 	params := []string{r.Subject, r.Domain, r.Object, r.Action}
 	ok, err = _enforcer.Enforce(params)
 	return
+}
+
+func HasRoleInDomain(userID, role, domain string) bool {
+	return _enforcer.HasGroupingPolicy(userID, role, domain)
 }

@@ -25,9 +25,9 @@ import (
 	restfulspec "github.com/emicklei/go-restful-openapi"
 )
 
-func RegisterToRestContainer(c *restful.Container, conf *config.RBACConfig) error {
+func RegisterToRestContainer(c *restful.Container, conf *config.RBACConfig, authConf *config.OAuth2Config) error {
 	webservice := apirouter.GetWebserviceWithPatch(c, "/v1/rbac")
-	webservice.Filter(filters.Auth())
+	webservice.Filter(filters.AuthFilter(authConf))
 	handler := newRBACHandler(conf)
 
 	webservice.Route(webservice.POST("/{tenant_id}/roles").

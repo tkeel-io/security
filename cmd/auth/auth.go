@@ -25,6 +25,7 @@ import (
 
 func NewAuthServerCmd() *cobra.Command {
 	opts := options.NewServerRunOptions()
+
 	cmd := &cobra.Command{
 		Use:   "auth",
 		Short: "auth: an http server of tkeel plugin of auth.",

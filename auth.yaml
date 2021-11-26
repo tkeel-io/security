@@ -20,7 +20,8 @@ rbac:
 oauth2:
   redis:
     addr: 127.0.0.1:6379
-  accessgenerate:
+  accessGenerate:
+    accessTokenExp: 7200h
     securitykey: 00000000
 
 entity:
