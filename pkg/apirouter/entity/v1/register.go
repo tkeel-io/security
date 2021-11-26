@@ -22,11 +22,11 @@ import (
 	restfulspec "github.com/emicklei/go-restful-openapi"
 )
 
-func AddToRestContainer(c *restful.Container, conf *config.EntityConfig) error {
+func RegisterToRestContainer(c *restful.Container, conf *config.EntityConfig, authConf *config.OAuth2Config) error {
 	webservice := apirouter.GetWebserviceWithPatch(c, "/v1/entity")
 	handler := newEntityHandler(conf)
 
-	webservice.Filter(filters.Auth())
+	webservice.Filter(filters.AuthFilter(authConf))
 
 	webservice.Route(webservice.GET("/{entity_type}/{entity_id}/token").
 		To(handler.Token).

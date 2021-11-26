@@ -139,6 +139,27 @@
           "Oauth"
         ],
         "operationId": "Token",
+        "parameters": [
+          {
+            "type": "string",
+            "description": "GrantType:(password/authorization_code)",
+            "name": "grant_type",
+            "in": "query",
+            "required": true
+          },
+          {
+            "type": "string",
+            "description": "user name while GrantType is password,style must be 'tenantID-username'",
+            "name": "username",
+            "in": "query"
+          },
+          {
+            "type": "string",
+            "description": "password",
+            "name": "password",
+            "in": "query"
+          }
+        ],
         "responses": {
           "200": {
             "description": "OK"
@@ -186,7 +207,7 @@
         "parameters": [
           {
             "type": "string",
-            "description": "tenant's ID",
+            "description": "tenant`s ID",
             "name": "tenant_id",
             "in": "path",
             "required": true
@@ -244,7 +265,7 @@
         "parameters": [
           {
             "type": "string",
-            "description": "tenant's ID",
+            "description": "tenant`s ID",
             "name": "tenant_id",
             "in": "path",
             "required": true
@@ -277,7 +298,7 @@
         "parameters": [
           {
             "type": "string",
-            "description": "tenant's ID",
+            "description": "tenants`ID",
             "name": "tenant_id",
             "in": "path",
             "required": true
@@ -311,14 +332,14 @@
         "parameters": [
           {
             "type": "string",
-            "description": "tenant's ID",
+            "description": "tenants`ID",
             "name": "tenant_id",
             "in": "path",
             "required": true
           },
           {
             "type": "string",
-            "description": "user's ID",
+            "description": "users`ID",
             "name": "user_id",
             "in": "path",
             "required": true
@@ -344,14 +365,14 @@
         "parameters": [
           {
             "type": "string",
-            "description": "tenant's ID",
+            "description": "tenants`ID",
             "name": "tenant_id",
             "in": "path",
             "required": true
           },
           {
             "type": "string",
-            "description": "user's ID",
+            "description": "users`ID",
             "name": "user_id",
             "in": "path",
             "required": true
@@ -384,7 +405,7 @@
         "parameters": [
           {
             "type": "string",
-            "description": "tenant's ID",
+            "description": "tenant`s ID",
             "name": "tenant_id",
             "in": "path",
             "required": true
@@ -423,7 +444,7 @@
         "parameters": [
           {
             "type": "string",
-            "description": "tenant's ID",
+            "description": "tenant`s ID",
             "name": "tenant_id",
             "in": "path",
             "required": true
@@ -455,7 +476,7 @@
         }
       }
     },
-    "/v1/tenant": {
+    "/v1/tenants": {
       "get": {
         "produces": [
           "application/json"
@@ -518,7 +539,7 @@
         }
       }
     },
-    "/v1/tenant/users": {
+    "/v1/tenants/users": {
       "get": {
         "produces": [
           "application/json"
@@ -528,6 +549,33 @@
         ],
         "summary": "get users",
         "operationId": "UserQuery",
+        "parameters": [
+          {
+            "type": "string",
+            "description": "tenant`s ID",
+            "name": "tenant_id",
+            "in": "query",
+            "required": true
+          },
+          {
+            "type": "string",
+            "description": "user`s ID",
+            "name": "user_id",
+            "in": "query"
+          },
+          {
+            "type": "string",
+            "description": "search by condition",
+            "name": "search_key",
+            "in": "query"
+          },
+          {
+            "type": "string",
+            "description": "condition`s value",
+            "name": "key_words",
+            "in": "query"
+          }
+        ],
         "responses": {
           "200": {
             "description": "ok",
@@ -569,7 +617,7 @@
         }
       }
     },
-    "/v1/tenant/users/{user_id}": {
+    "/v1/tenants/users/{user_id}": {
       "delete": {
         "produces": [
           "application/json"
@@ -594,7 +642,7 @@
         }
       }
     },
-    "/v1/tenant/{tenant_id}": {
+    "/v1/tenants/{tenant_id}": {
       "delete": {
         "produces": [
           "application/json"
@@ -616,41 +664,6 @@
         "responses": {
           "200": {
             "description": "ok"
-          }
-        }
-      }
-    },
-    "/v1/tenants": {
-      "get": {
-        "produces": [
-          "application/json"
-        ],
-        "tags": [
-          "Tenant"
-        ],
-        "summary": "get tenants",
-        "operationId": "Query",
-        "parameters": [
-          {
-            "type": "string",
-            "name": "tenant_id",
-            "in": "query"
-          },
-          {
-            "type": "string",
-            "name": "title",
-            "in": "query"
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "ok",
-            "schema": {
-              "type": "array",
-              "items": {
-                "$ref": "#/definitions/*dao.Tenant"
-              }
-            }
           }
         }
       }
@@ -761,15 +774,15 @@
     "v1.TenantCreteIn": {
       "required": [
         "title",
-        "Remark",
+        "remark",
         "admin"
       ],
       "properties": {
-        "Remark": {
-          "type": "string"
-        },
         "admin": {
           "$ref": "#/definitions/v1.UserCreateIn"
+        },
+        "remark": {
+          "type": "string"
         },
         "title": {
           "type": "string"

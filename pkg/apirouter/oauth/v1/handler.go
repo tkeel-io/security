@@ -47,6 +47,7 @@ func (h *oauthHandler) Authorize(req *restful.Request, resp *restful.Response) {
 	err := h.operator.HandleAuthorizeRequest(resp, req.Request)
 	if err != nil {
 		_log.Error(err)
+		response.SrvErrWithRest(resp, errcode.ErrInUnexpected, nil)
 		return
 	}
 }
@@ -54,6 +55,7 @@ func (h *oauthHandler) Login(req *restful.Request, resp *restful.Response) {
 	err := h.operator.HandleAuthorizeRequest(resp, req.Request)
 	if err != nil {
 		_log.Error(err)
+		response.SrvErrWithRest(resp, errcode.ErrInUnexpected, nil)
 		return
 	}
 }

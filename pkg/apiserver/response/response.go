@@ -52,9 +52,8 @@ func SrvErrWithWriter(w http.ResponseWriter, serErr *errcode.SrvError, data inte
 		Msg:  serErr.Msg(),
 		Data: data,
 	}
-
 	respBytes, _ := json.Marshal(resp)
-	w.Header().Set("Content-Type", "application/json")
+	w.Header().Add("Content-Type", "application/json")
 	w.Write(respBytes)
 }
 
@@ -66,6 +65,6 @@ func DefineWithWriter(w http.ResponseWriter, status, code int, msg string, data 
 		Data: data,
 	}
 	respBytes, _ := json.Marshal(resp)
-	w.Header().Set("ContentType", "application/json")
+	w.Header().Add("Content-Type", "application/json")
 	w.Write(respBytes)
 }

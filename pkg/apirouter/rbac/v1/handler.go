@@ -28,11 +28,11 @@ import (
 var _log = logger.NewLogger("auth.apirouter.rbacV1")
 
 type rbacHandler struct {
-	operator *casbin.SyncedEnforcer
+	operator *casbin.Enforcer
 }
 
 func newRBACHandler(conf *config.RBACConfig) *rbacHandler {
-	e, err := rbac.NewSyncedEnforcer(conf.Adapter)
+	e, err := rbac.NewRBACOperator(conf.Adapter)
 	if err != nil {
 		_log.Error(err)
 		return nil

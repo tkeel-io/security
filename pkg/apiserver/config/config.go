@@ -33,7 +33,7 @@ type Config struct {
 	Database *DatabaseConfig `json:"database" yaml:"database"`
 	Oauth2   *OAuth2Config   `json:"oauth2" yaml:"oauth2"`
 	RBAC     *RBACConfig     `json:"rbac" yaml:"rbac"`
-	Entity   *EntityConfig   `json:"entity" yaml:"entity" mapstruct:""`
+	Entity   *EntityConfig   `json:"entity" yaml:"entity"`
 }
 
 type ServerConfig struct {
@@ -45,15 +45,16 @@ type DatabaseConfig struct {
 }
 
 type OAuth2Config struct {
+	AuthType       string      `json:"auth_type" yaml:"authType"`
 	Redis          *RedisConf  `json:"redis" yaml:"redis"`
-	AccessGenerate *AccessConf `json:"access_generate" yaml:"access_generate"`
+	AccessGenerate *AccessConf `json:"access_generate" yaml:"accessGenerate"`
 }
 
 type RBACConfig struct {
 	Adapter *MysqlConf `json:"adapter" yaml:"adapter"`
 }
 type EntityConfig struct {
-	SecurityKey string `json:"securitykey" yaml:"securitykey"`
+	SecurityKey string `json:"securitykey" yaml:"securityKey"`
 }
 type MysqlConf struct {
 	DBName   string `json:"dbname" yaml:"dbname"`
@@ -63,11 +64,13 @@ type MysqlConf struct {
 	Port     string `json:"port" yaml:"port"`
 }
 type RedisConf struct {
-	Addr string `json:"addr" yaml:"addr"`
-	DB   int    `json:"db" yaml:"db"`
+	Addr     string `json:"addr" yaml:"addr"`
+	DB       int    `json:"db" yaml:"db"`
+	Password string `json:"password" yaml:"password"`
 }
 type AccessConf struct {
-	SecurityKey string `json:"security_key" yaml:"security_key"`
+	AccessTokenExp string `json:"access_token_exp" yaml:"accessTokenExp"`
+	SecurityKey    string `json:"security_key" yaml:"securityKey"`
 }
 
 func New() *Config {

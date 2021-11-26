@@ -24,7 +24,7 @@ import (
 	restfulspec "github.com/emicklei/go-restful-openapi"
 )
 
-func AddToRestContainer(c *restful.Container, conf *config.OAuth2Config) error {
+func RegisterToRestContainer(c *restful.Container, conf *config.OAuth2Config) error {
 	webservice := apirouter.GetWebserviceWithPatch(c, "/v1/oauth")
 
 	oauthOperator, err := oauth.NewOperator(conf)
@@ -36,18 +36,24 @@ func AddToRestContainer(c *restful.Container, conf *config.OAuth2Config) error {
 
 	webservice.Route(webservice.GET("/authorize").
 		To(handler.Authorize).
+		Produces(restful.MIME_JSON).
 		Metadata(restfulspec.KeyOpenAPITags, []string{constants.APITagOauth}))
 
 	webservice.Route(webservice.GET("/token").
 		To(handler.Token).
+		Param(webservice.QueryParameter("grant_type", "GrantType:(password/authorization_code)").Required(true)).
+		Param(webservice.QueryParameter("username", "user name while GrantType is password,style must be 'tenantID-username'")).
+		Param(webservice.QueryParameter("password", "password")).
 		Metadata(restfulspec.KeyOpenAPITags, []string{constants.APITagOauth}))
 
 	webservice.Route(webservice.GET("/authenticate").
 		To(handler.Authenticate).
+		Produces(restful.MIME_JSON).
 		Metadata(restfulspec.KeyOpenAPITags, []string{constants.APITagOauth}))
 
 	webservice.Route(webservice.GET("/on_code").
 		To(handler.OnCode).
+		Produces(restful.MIME_JSON).
 		Metadata(restfulspec.KeyOpenAPITags, []string{constants.APITagOauth}))
 
 	return nil
