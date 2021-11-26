@@ -17,6 +17,7 @@ import (
 	"net/http"
 	"strconv"
 	"strings"
+	"time"
 
 	"github.com/tkeel-io/security/pkg/apiserver/config"
 	"github.com/tkeel-io/security/pkg/apiserver/response"
@@ -46,12 +47,25 @@ func GetOauthOperator() *server.Server {
 	return _oauthOperator
 }
 func NewOperator(conf *config.OAuth2Config) (*server.Server, error) {
+	var err error
 	manager := manage.NewDefaultManager()
-	manager.SetAuthorizeCodeTokenCfg(manage.DefaultAuthorizeCodeTokenCfg)
+	tokenConf := &manage.Config{}
+	if conf.AccessGenerate.AccessTokenExp == "" {
+		tokenConf = manage.DefaultAuthorizeCodeTokenCfg
+	} else {
+		tokenConf.AccessTokenExp, err = time.ParseDuration(conf.AccessGenerate.AccessTokenExp)
+		_log.Error(err)
+		tokenConf.RefreshTokenExp = tokenConf.AccessTokenExp * 10
+		tokenConf.IsGenerateRefresh = true
+	}
+
+	// manager.SetAuthorizeCodeTokenCfg(tokenConf).
+	manager.SetPasswordTokenCfg(tokenConf)
 	// token store.
 	redisStore := oredis.NewRedisStore(&redis.Options{
-		Addr: conf.Redis.Addr,
-		DB:   conf.Redis.DB,
+		Addr:     conf.Redis.Addr,
+		DB:       conf.Redis.DB,
+		Password: conf.Redis.Password,
 	})
 	manager.MapTokenStorage(redisStore)
 	// generate jwt access token.
@@ -77,8 +91,13 @@ func NewOperator(conf *config.OAuth2Config) (*server.Server, error) {
 		conditions["username"] = splits[1]
 		conditions["tenant_id"] = tenantID
 		users, err := user.QueryByCondition(conditions)
-		if len(users) != 1 || err != nil {
-			return "", fmt.Errorf("query by condition %w", err)
+		if len(users) == 0 || err != nil {
+			if err != nil {
+				err = fmt.Errorf("user not found %w", err)
+			} else {
+				err = fmt.Errorf("user not found")
+			}
+			return "", err
 		}
 		err = bcrypt.CompareHashAndPassword([]byte(users[0].Password), []byte(password))
 		if err != nil {
@@ -93,6 +112,18 @@ func NewOperator(conf *config.OAuth2Config) (*server.Server, error) {
 		return
 	})
 	_oauthOperator.SetResponseTokenHandler(func(w http.ResponseWriter, data map[string]interface{}, header http.Header, statusCode ...int) error {
+		w.Header().Set("Content-Type", "application/json;charset=UTF-8")
+		w.Header().Set("Cache-Control", "no-store")
+		w.Header().Set("Pragma", "no-cache")
+		for key := range header {
+			w.Header().Set(key, header.Get(key))
+		}
+
+		_log.Info(data)
+		if v, ok := data["error"]; ok {
+			response.DefineWithWriter(w, http.StatusBadRequest, errcode.CodeInvalidParam, v.(string), nil)
+			return fmt.Errorf(v.(string))
+		}
 		response.SrvErrWithWriter(w, errcode.SuccessServe, data)
 		return nil
 	})
@@ -104,8 +135,9 @@ func NewOperator(conf *config.OAuth2Config) (*server.Server, error) {
 			StatusCode:  http.StatusInternalServerError,
 		}
 	})
+
 	_oauthOperator.SetResponseErrorHandler(func(re *errors.Response) {
-		_log.Error("response error:", re.Error.Error())
+		_log.Errorf("response error: %v", re)
 	})
 	_oauthOperator.SetAllowedGrantType(oauth2.AuthorizationCode, oauth2.Implicit, oauth2.PasswordCredentials, oauth2.Refreshing, oauth2.ClientCredentials)
 

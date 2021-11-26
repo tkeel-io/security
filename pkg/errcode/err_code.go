@@ -23,6 +23,7 @@ const (
 	// CodeUnexpectedError.
 	CodeUnexpectedError = iota + 10000
 	CodeInvalidAccessToken
+	CodeForbiddenAccess
 	CodeInvalidParam
 	CodeGenToken
 	CodeTokenInvalid
@@ -43,6 +44,7 @@ var (
 	// ErrInUnexpected.
 	ErrInUnexpected         = NewError(CodeUnexpectedError, "unexpected server error")
 	ErrInvalidAccessRequest = NewError(CodeInvalidAccessToken, "invalid access request")
+	ErrInForbiddenAccess    = NewError(CodeForbiddenAccess, "forbidden access")
 	ErrInvalidParam         = NewError(CodeInvalidParam, "invalid param")
 	ErrInDatabase           = NewError(CodeDatabaseErr, "database err")
 	ErrInExistedResource    = NewError(CodeResourceExisted, "existed resource")
@@ -58,12 +60,14 @@ func CodeToStatus(code int) int {
 		return http.StatusOK
 	case CodeInvalidAccessToken:
 		return http.StatusUnauthorized
-	case CodeInvalidParam:
-		return http.StatusBadRequest
 	case CodeTokenInvalid:
 		return http.StatusUnauthorized
 	case CodeTokenTimeOut:
 		return http.StatusUnauthorized
+	case CodeForbiddenAccess:
+		return http.StatusForbidden
+	case CodeInvalidParam:
+		return http.StatusBadRequest
 	case CodeServiceUnavailable:
 		return http.StatusServiceUnavailable
 	default:

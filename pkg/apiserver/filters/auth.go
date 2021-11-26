@@ -13,18 +13,33 @@ limitations under the License.
 package filters
 
 import (
+	"strings"
+
+	"github.com/tkeel-io/security/pkg/apiserver/config"
 	"github.com/tkeel-io/security/pkg/apiserver/response"
 	"github.com/tkeel-io/security/pkg/errcode"
 	"github.com/tkeel-io/security/pkg/models/oauth"
+	"github.com/tkeel-io/security/pkg/models/rbac"
 
 	"github.com/emicklei/go-restful"
 )
 
-func Auth() restful.FilterFunction {
+func AuthFilter(conf *config.OAuth2Config, roles ...string) restful.FilterFunction {
 	return func(req *restful.Request, resp *restful.Response, chain *restful.FilterChain) {
+		var err error
+		if conf.AuthType == "demo" {
+			req.SetAttribute("userID", "usr-1-demoUser")
+			chain.ProcessFilter(req, resp)
+			return
+		}
 		operator := oauth.GetOauthOperator()
 		if operator == nil {
-			_log.Errorf("nil oauth operator")
+			operator, err = oauth.NewOperator(conf)
+			if err != nil {
+				_log.Error(err)
+				response.SrvErrWithRest(resp, errcode.ErrServiceUnavailable, nil)
+				return
+			}
 		}
 		token, err := operator.ValidationBearerToken(req.Request)
 		if err != nil {
@@ -32,8 +47,27 @@ func Auth() restful.FilterFunction {
 			response.SrvErrWithRest(resp, errcode.ErrInvalidAccessRequest, nil)
 			return
 		}
-
+		domain := strings.Split(token.GetUserID(), "-")[1]
 		req.SetAttribute("userID", token.GetUserID())
+		req.SetAttribute("tenantID", domain)
+
+		if len(roles) == 0 {
+			chain.ProcessFilter(req, resp)
+			return
+		}
+		hasRole := false
+		for i := range roles {
+			_log.Info(token.GetUserID(), roles[i], domain)
+			if rbac.HasRoleInDomain(token.GetUserID(), roles[i], domain) {
+				hasRole = true
+				break
+			}
+		}
+		_log.Info(hasRole)
+		if !hasRole {
+			response.SrvErrWithRest(resp, errcode.ErrInForbiddenAccess, nil)
+			return
+		}
 		chain.ProcessFilter(req, resp)
 	}
 }

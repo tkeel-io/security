@@ -476,7 +476,7 @@
         }
       }
     },
-    "/v1/tenant": {
+    "/v1/tenants": {
       "get": {
         "produces": [
           "application/json"
@@ -539,7 +539,7 @@
         }
       }
     },
-    "/v1/tenant/users": {
+    "/v1/tenants/users": {
       "get": {
         "produces": [
           "application/json"
@@ -617,7 +617,7 @@
         }
       }
     },
-    "/v1/tenant/users/{user_id}": {
+    "/v1/tenants/users/{user_id}": {
       "delete": {
         "produces": [
           "application/json"
@@ -642,7 +642,7 @@
         }
       }
     },
-    "/v1/tenant/{tenant_id}": {
+    "/v1/tenants/{tenant_id}": {
       "delete": {
         "produces": [
           "application/json"
@@ -774,15 +774,15 @@
     "v1.TenantCreteIn": {
       "required": [
         "title",
-        "Remark",
+        "remark",
         "admin"
       ],
       "properties": {
-        "Remark": {
-          "type": "string"
-        },
         "admin": {
           "$ref": "#/definitions/v1.UserCreateIn"
+        },
+        "remark": {
+          "type": "string"
         },
         "title": {
           "type": "string"

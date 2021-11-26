@@ -64,6 +64,7 @@ func (s *APIServer) PrepareRun(stopCh <-chan struct{}) error {
 	s.restContainer.Router(restful.CurlyRouter{})
 	dao.SetUp(s.Config.Database.Mysql)
 	s.installApis()
+	_log.Infof(s.Config.Oauth2.AccessGenerate.AccessTokenExp)
 	for _, webservice := range s.restContainer.RegisteredWebServices() {
 		_log.Infof("registered root patch: %s", webservice.RootPath())
 	}
@@ -77,9 +78,9 @@ func (s *APIServer) PrepareRun(stopCh <-chan struct{}) error {
 func (s *APIServer) installApis() {
 	s.restContainer.Filter(filters.GlobalLog())
 	must(oauthV1.RegisterToRestContainer(s.restContainer, s.Config.Oauth2))
-	must(rbacrouter.RegisterToRestContainer(s.restContainer, s.Config.RBAC))
+	must(rbacrouter.RegisterToRestContainer(s.restContainer, s.Config.RBAC, s.Config.Oauth2))
 	must(tenantrouter.RegisterToRestContainer(s.restContainer))
-	must(entityrouter.RegisterToRestContainer(s.restContainer, s.Config.Entity))
+	must(entityrouter.RegisterToRestContainer(s.restContainer, s.Config.Entity, s.Config.Oauth2))
 }
 
 func must(err error) {
