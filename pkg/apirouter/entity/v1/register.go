@@ -15,7 +15,6 @@ package v1
 import (
 	"github.com/tkeel-io/security/pkg/apirouter"
 	"github.com/tkeel-io/security/pkg/apiserver/config"
-	"github.com/tkeel-io/security/pkg/apiserver/filters"
 	"github.com/tkeel-io/security/pkg/constants"
 
 	"github.com/emicklei/go-restful"
@@ -26,14 +25,13 @@ func RegisterToRestContainer(c *restful.Container, conf *config.EntityConfig, au
 	webservice := apirouter.GetWebserviceWithPatch(c, "/v1/entity")
 	handler := newEntityHandler(conf)
 
-	webservice.Filter(filters.AuthFilter(authConf))
-
 	webservice.Route(webservice.GET("/{entity_type}/{entity_id}/token").
 		To(handler.Token).
 		Doc("get a entity token").
-		Param(webservice.PathParameter("entity_type", "EntityType")).
-		Param(webservice.PathParameter("entity_id", "Entity's ID")).
-		Param(webservice.QueryParameter("expires_in", "invalid period( seconds )")).
+		Param(webservice.PathParameter("entity_type", "EntityType").Required(true)).
+		Param(webservice.PathParameter("entity_id", "Entity's ID").Required(true)).
+		Param(webservice.QueryParameter("owner", "user`s ID").Required(true)).
+		Param(webservice.QueryParameter("expires_in", "invalid period( seconds );default 365 days").Required(false)).
 		Metadata(restfulspec.KeyOpenAPITags, []string{constants.APITagEntity}))
 
 	webservice.Route(webservice.POST("/token/valid").
