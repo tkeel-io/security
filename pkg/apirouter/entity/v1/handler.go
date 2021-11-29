@@ -47,8 +47,12 @@ func (h *entityHandler) Token(req *restful.Request, resp *restful.Response) {
 	)
 	entityType := req.PathParameter("entity_type")
 	entityID := req.PathParameter("entity_id")
+	owner := req.QueryParameter("owner")
+	if len(entityType) == 0 || len(entityID) == 0 || len(owner) == 0 {
+		response.SrvErrWithRest(resp, errcode.ErrInvalidParam, nil)
+		return
+	}
 	expiresIn, _ := strconv.Atoi(req.QueryParameter("expires_in"))
-	owner := req.Attribute("userID")
 	if expiresIn == 0 {
 		expiresDuration = time.Hour * 24 * 365
 	} else {

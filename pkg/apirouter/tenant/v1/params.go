@@ -32,3 +32,19 @@ type UserCreateIn struct {
 	Avatar   string `json:"avatar"`
 	Email    string `json:"email"`
 }
+
+type Tenant struct {
+	ID     int    `json:"id"`
+	Title  string `json:"title"`
+	Remark string `json:"remark"`
+}
+
+type User struct {
+	ID         string `json:"user_id"`
+	ExternalID string `json:"external_id"`
+	TenantID   int    `json:"tenant_id"`
+	UserName   string `json:"username"`
+	NickName   string `json:"nick_name"`
+	Avatar     string `json:"avatar"`
+	Email      string `json:"email"`
+}

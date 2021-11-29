@@ -18,7 +18,6 @@ import (
 	"github.com/tkeel-io/security/pkg/apirouter"
 	"github.com/tkeel-io/security/pkg/constants"
 	"github.com/tkeel-io/security/pkg/errcode"
-	"github.com/tkeel-io/security/pkg/models/dao"
 
 	"github.com/emicklei/go-restful"
 	restfulspec "github.com/emicklei/go-restful-openapi"
@@ -41,7 +40,7 @@ func RegisterToRestContainer(c *restful.Container) error {
 		Doc("get tenants").
 		Param(webservice.QueryParameter("tenant_id", "").Required(false)).
 		Param(webservice.QueryParameter("title", "").Required(false)).
-		Returns(http.StatusOK, errcode.ErrMsgOK, []*dao.Tenant{}).
+		Returns(http.StatusOK, errcode.ErrMsgOK, []Tenant{}).
 		Metadata(restfulspec.KeyOpenAPITags, []string{constants.APITagTenant}))
 
 	webservice.Route(webservice.DELETE("/{tenant_id}").
@@ -55,7 +54,7 @@ func RegisterToRestContainer(c *restful.Container) error {
 		To(handler.UserCreate).
 		Doc("create a user").
 		Reads(UserCreateIn{}).
-		Returns(http.StatusOK, errcode.ErrMsgOK, dao.User{}).
+		Returns(http.StatusOK, errcode.ErrMsgOK, User{}).
 		Metadata(restfulspec.KeyOpenAPITags, []string{constants.APITagTenant}))
 
 	webservice.Route(webservice.GET("/users").
@@ -65,7 +64,7 @@ func RegisterToRestContainer(c *restful.Container) error {
 		Param(webservice.QueryParameter("user_id", "user`s ID").Required(false)).
 		Param(webservice.QueryParameter("search_key", "search by condition").Required(false)).
 		Param(webservice.QueryParameter("key_words", "condition`s value").Required(false)).
-		Returns(http.StatusOK, errcode.ErrMsgOK, []dao.User{}).
+		Returns(http.StatusOK, errcode.ErrMsgOK, []User{}).
 		Metadata(restfulspec.KeyOpenAPITags, []string{constants.APITagTenant}))
 
 	webservice.Route(webservice.DELETE("/users/{user_id}").
