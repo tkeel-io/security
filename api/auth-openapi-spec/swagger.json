@@ -70,7 +70,14 @@
           },
           {
             "type": "string",
-            "description": "invalid period( seconds )",
+            "description": "user`s ID",
+            "name": "owner",
+            "in": "query",
+            "required": true
+          },
+          {
+            "type": "string",
+            "description": "invalid period( seconds );default 365 days",
             "name": "expires_in",
             "in": "query"
           }
@@ -90,7 +97,16 @@
         "tags": [
           "Oauth"
         ],
+        "summary": "oauth authenticate",
         "operationId": "Authenticate",
+        "parameters": [
+          {
+            "type": "string",
+            "description": "Bearer token",
+            "name": "Authorization",
+            "in": "header"
+          }
+        ],
         "responses": {
           "200": {
             "description": "OK"
@@ -138,7 +154,8 @@
         "tags": [
           "Oauth"
         ],
-        "operationId": "Token",
+        "summary": "oauth token",
+        "operationId": "OauthToken",
         "parameters": [
           {
             "type": "string",
@@ -504,7 +521,7 @@
             "schema": {
               "type": "array",
               "items": {
-                "$ref": "#/definitions/*dao.Tenant"
+                "$ref": "#/definitions/v1.Tenant"
               }
             }
           }
@@ -582,7 +599,7 @@
             "schema": {
               "type": "array",
               "items": {
-                "$ref": "#/definitions/dao.User"
+                "$ref": "#/definitions/v1.User"
               }
             }
           }
@@ -611,7 +628,7 @@
           "200": {
             "description": "ok",
             "schema": {
-              "$ref": "#/definitions/dao.User"
+              "$ref": "#/definitions/v1.User"
             }
           }
         }
@@ -670,42 +687,6 @@
     }
   },
   "definitions": {
-    "*dao.Tenant": {},
-    "dao.User": {
-      "required": [
-        "user_id",
-        "external_id",
-        "tenant_id",
-        "username",
-        "nick_name",
-        "avatar",
-        "email"
-      ],
-      "properties": {
-        "avatar": {
-          "type": "string"
-        },
-        "email": {
-          "type": "string"
-        },
-        "external_id": {
-          "type": "string"
-        },
-        "nick_name": {
-          "type": "string"
-        },
-        "tenant_id": {
-          "type": "integer",
-          "format": "int32"
-        },
-        "user_id": {
-          "type": "string"
-        },
-        "username": {
-          "type": "string"
-        }
-      }
-    },
     "v1.AddPermissionIn": {
       "required": [
         "permission_object",
@@ -744,6 +725,25 @@
           "type": "string"
         },
         "user_id": {
+          "type": "string"
+        }
+      }
+    },
+    "v1.Tenant": {
+      "required": [
+        "id",
+        "title",
+        "remark"
+      ],
+      "properties": {
+        "id": {
+          "type": "integer",
+          "format": "int32"
+        },
+        "remark": {
+          "type": "string"
+        },
+        "title": {
           "type": "string"
         }
       }
@@ -795,6 +795,41 @@
       ],
       "properties": {
         "entity_token": {
+          "type": "string"
+        }
+      }
+    },
+    "v1.User": {
+      "required": [
+        "user_id",
+        "external_id",
+        "tenant_id",
+        "username",
+        "nick_name",
+        "avatar",
+        "email"
+      ],
+      "properties": {
+        "avatar": {
+          "type": "string"
+        },
+        "email": {
+          "type": "string"
+        },
+        "external_id": {
+          "type": "string"
+        },
+        "nick_name": {
+          "type": "string"
+        },
+        "tenant_id": {
+          "type": "integer",
+          "format": "int32"
+        },
+        "user_id": {
+          "type": "string"
+        },
+        "username": {
           "type": "string"
         }
       }
