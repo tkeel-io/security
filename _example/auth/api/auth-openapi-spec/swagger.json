@@ -1,0 +1,948 @@
+{
+  "swagger": "2.0",
+  "info": {
+    "description": "Auth OpenAPI",
+    "title": "Auth",
+    "contact": {
+      "name": "tKeel",
+      "url": "https://tKeel.io/",
+      "email": "auth@tkeel.com"
+    },
+    "license": {
+      "name": "Apache 2.0",
+      "url": "https://www.apache.org/licenses/LICENSE-2.0.html"
+    },
+    "version": "0.1.0",
+    "x-taggroups": []
+  },
+  "paths": {
+    "/v1/entity/token/valid": {
+      "post": {
+        "produces": [
+          "application/json"
+        ],
+        "tags": [
+          "Entity"
+        ],
+        "summary": "valid a entity token",
+        "operationId": "TokenValid",
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/v1.TokenValidIn"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
+    },
+    "/v1/entity/{entity_type}/{entity_id}/token": {
+      "get": {
+        "produces": [
+          "application/json"
+        ],
+        "tags": [
+          "Entity"
+        ],
+        "summary": "get a entity token",
+        "operationId": "Token",
+        "parameters": [
+          {
+            "type": "string",
+            "description": "EntityType",
+            "name": "entity_type",
+            "in": "path",
+            "required": true
+          },
+          {
+            "type": "string",
+            "description": "Entity's ID",
+            "name": "entity_id",
+            "in": "path",
+            "required": true
+          },
+          {
+            "type": "string",
+            "description": "user`s ID",
+            "name": "owner",
+            "in": "query",
+            "required": true
+          },
+          {
+            "type": "string",
+            "description": "invalid period( seconds );default 365 days",
+            "name": "expires_in",
+            "in": "query"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
+    },
+    "/v1/oauth/authenticate": {
+      "get": {
+        "produces": [
+          "application/json"
+        ],
+        "tags": [
+          "Oauth"
+        ],
+        "summary": "oauth authenticate",
+        "operationId": "Authenticate",
+        "parameters": [
+          {
+            "type": "string",
+            "description": "Bearer token",
+            "name": "Authorization",
+            "in": "header"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
+    },
+    "/v1/oauth/authorize": {
+      "get": {
+        "produces": [
+          "application/json"
+        ],
+        "tags": [
+          "Oauth"
+        ],
+        "operationId": "Authorize",
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
+    },
+    "/v1/oauth/on_code": {
+      "get": {
+        "produces": [
+          "application/json"
+        ],
+        "tags": [
+          "Oauth"
+        ],
+        "operationId": "OnCode",
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
+    },
+    "/v1/oauth/token": {
+      "get": {
+        "produces": [
+          "application/json"
+        ],
+        "tags": [
+          "Oauth"
+        ],
+        "summary": "oauth token",
+        "operationId": "Token",
+        "parameters": [
+          {
+            "type": "string",
+            "description": "GrantType:(password/authorization_code)",
+            "name": "grant_type",
+            "in": "query",
+            "required": true
+          },
+          {
+            "type": "string",
+            "description": "user name while GrantType is password,style must be 'tenantID-username'",
+            "name": "username",
+            "in": "query"
+          },
+          {
+            "type": "string",
+            "description": "password",
+            "name": "password",
+            "in": "query"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
+    },
+    "/v1/oauth/{idp_type}/{tenant_id}/callback": {
+      "get": {
+        "produces": [
+          "application/json"
+        ],
+        "tags": [
+          "Oauth"
+        ],
+        "summary": "identity provider connection callback address",
+        "operationId": "OnConnections",
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
+    },
+    "/v1/oauth/{idp_type}/{tenant_id}/connection": {
+      "get": {
+        "produces": [
+          "application/json"
+        ],
+        "tags": [
+          "Oauth"
+        ],
+        "summary": "identity provider connection",
+        "operationId": "Connections",
+        "parameters": [
+          {
+            "type": "string",
+            "description": "identity provider type: OIDC LDAP",
+            "name": "idp_type",
+            "in": "path",
+            "required": true
+          },
+          {
+            "type": "string",
+            "description": "tenant`s ID",
+            "name": "tenant_id",
+            "in": "path",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
+    },
+    "/v1/oauth/{idp_type}/{tenant_id}/register": {
+      "post": {
+        "produces": [
+          "application/json"
+        ],
+        "tags": [
+          "Oauth"
+        ],
+        "summary": "register a external identity provider",
+        "operationId": "Register",
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
+    },
+    "/v1/rbac/permission/check": {
+      "post": {
+        "produces": [
+          "application/json"
+        ],
+        "tags": [
+          "RBAC"
+        ],
+        "summary": "delete a role in tenant",
+        "operationId": "PermissionCheck",
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/v1.PermissionCheck"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
+    },
+    "/v1/rbac/{tenant_id}/roles": {
+      "get": {
+        "produces": [
+          "application/json"
+        ],
+        "tags": [
+          "RBAC"
+        ],
+        "summary": "Get role list in tenant",
+        "operationId": "RolesInDomain",
+        "parameters": [
+          {
+            "type": "string",
+            "description": "tenant`s ID",
+            "name": "tenant_id",
+            "in": "path",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      },
+      "post": {
+        "produces": [
+          "application/json"
+        ],
+        "tags": [
+          "RBAC"
+        ],
+        "summary": " Add a role in tenant ",
+        "operationId": "AddRoleInDomain",
+        "parameters": [
+          {
+            "type": "string",
+            "description": "tenant's ID",
+            "name": "tenant_id",
+            "in": "path",
+            "required": true
+          },
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/v1.AddPermissionIn"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "ok"
+          }
+        }
+      }
+    },
+    "/v1/rbac/{tenant_id}/roles/{role}": {
+      "delete": {
+        "produces": [
+          "application/json"
+        ],
+        "tags": [
+          "RBAC"
+        ],
+        "summary": "delete a role in tenant",
+        "operationId": "DeleteRoleInDomain",
+        "parameters": [
+          {
+            "type": "string",
+            "description": "tenant`s ID",
+            "name": "tenant_id",
+            "in": "path",
+            "required": true
+          },
+          {
+            "type": "string",
+            "description": "role'ID",
+            "name": "role",
+            "in": "path",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
+    },
+    "/v1/rbac/{tenant_id}/users/roles": {
+      "post": {
+        "produces": [
+          "application/json"
+        ],
+        "tags": [
+          "RBAC"
+        ],
+        "summary": "add roles for users",
+        "operationId": "AddRoleToUser",
+        "parameters": [
+          {
+            "type": "string",
+            "description": "tenants`ID",
+            "name": "tenant_id",
+            "in": "path",
+            "required": true
+          },
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/v1.AddRoleInDomainIn"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
+    },
+    "/v1/rbac/{tenant_id}/users/{user_id}/permissions": {
+      "get": {
+        "produces": [
+          "application/json"
+        ],
+        "tags": [
+          "RBAC"
+        ],
+        "summary": "get user permissions ",
+        "operationId": "UserPermissions",
+        "parameters": [
+          {
+            "type": "string",
+            "description": "tenants`ID",
+            "name": "tenant_id",
+            "in": "path",
+            "required": true
+          },
+          {
+            "type": "string",
+            "description": "users`ID",
+            "name": "user_id",
+            "in": "path",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
+    },
+    "/v1/rbac/{tenant_id}/users/{user_id}/roles/{role}": {
+      "delete": {
+        "produces": [
+          "application/json"
+        ],
+        "tags": [
+          "RBAC"
+        ],
+        "summary": "delete a role for user",
+        "operationId": "DeleteRoleOnUser",
+        "parameters": [
+          {
+            "type": "string",
+            "description": "tenants`ID",
+            "name": "tenant_id",
+            "in": "path",
+            "required": true
+          },
+          {
+            "type": "string",
+            "description": "users`ID",
+            "name": "user_id",
+            "in": "path",
+            "required": true
+          },
+          {
+            "type": "string",
+            "description": "role",
+            "name": "role",
+            "in": "path",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
+    },
+    "/v1/rbac/{tenant_id}/{role}/permissions": {
+      "post": {
+        "produces": [
+          "application/json"
+        ],
+        "tags": [
+          "RBAC"
+        ],
+        "summary": "add permission for role",
+        "operationId": "AddPermissionInRole",
+        "parameters": [
+          {
+            "type": "string",
+            "description": "tenant`s ID",
+            "name": "tenant_id",
+            "in": "path",
+            "required": true
+          },
+          {
+            "type": "string",
+            "description": "role'ID",
+            "name": "role",
+            "in": "path",
+            "required": true
+          },
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/v1.AddPermissionIn"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      },
+      "delete": {
+        "produces": [
+          "application/json"
+        ],
+        "tags": [
+          "RBAC"
+        ],
+        "summary": "delete a permission for role ",
+        "operationId": "DeletePermissionInRole",
+        "parameters": [
+          {
+            "type": "string",
+            "description": "tenant`s ID",
+            "name": "tenant_id",
+            "in": "path",
+            "required": true
+          },
+          {
+            "type": "string",
+            "description": "role'ID",
+            "name": "role",
+            "in": "path",
+            "required": true
+          },
+          {
+            "type": "string",
+            "description": "permission object",
+            "name": "permission_object",
+            "in": "query"
+          },
+          {
+            "type": "string",
+            "description": "permission action",
+            "name": "permission_action",
+            "in": "query"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
+    },
+    "/v1/tenants": {
+      "get": {
+        "produces": [
+          "application/json"
+        ],
+        "tags": [
+          "Tenant"
+        ],
+        "summary": "get tenants",
+        "operationId": "Query",
+        "parameters": [
+          {
+            "type": "string",
+            "name": "tenant_id",
+            "in": "query"
+          },
+          {
+            "type": "string",
+            "name": "title",
+            "in": "query"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "ok",
+            "schema": {
+              "type": "array",
+              "items": {
+                "$ref": "#/definitions/v1.Tenant"
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "produces": [
+          "application/json"
+        ],
+        "tags": [
+          "Tenant"
+        ],
+        "summary": " Create a tenant",
+        "operationId": "Create",
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/v1.TenantCreteIn"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "ok",
+            "schema": {
+              "$ref": "#/definitions/v1.TenantCreateOut"
+            }
+          }
+        }
+      }
+    },
+    "/v1/tenants/users": {
+      "get": {
+        "produces": [
+          "application/json"
+        ],
+        "tags": [
+          "Tenant"
+        ],
+        "summary": "get users",
+        "operationId": "UserQuery",
+        "parameters": [
+          {
+            "type": "string",
+            "description": "tenant`s ID",
+            "name": "tenant_id",
+            "in": "query",
+            "required": true
+          },
+          {
+            "type": "string",
+            "description": "user`s ID",
+            "name": "user_id",
+            "in": "query"
+          },
+          {
+            "type": "string",
+            "description": "search by condition",
+            "name": "search_key",
+            "in": "query"
+          },
+          {
+            "type": "string",
+            "description": "condition`s value",
+            "name": "key_words",
+            "in": "query"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "ok",
+            "schema": {
+              "type": "array",
+              "items": {
+                "$ref": "#/definitions/v1.User"
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "produces": [
+          "application/json"
+        ],
+        "tags": [
+          "Tenant"
+        ],
+        "summary": "create a user",
+        "operationId": "UserCreate",
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/v1.UserCreateIn"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "ok",
+            "schema": {
+              "$ref": "#/definitions/v1.User"
+            }
+          }
+        }
+      }
+    },
+    "/v1/tenants/users/{user_id}": {
+      "delete": {
+        "produces": [
+          "application/json"
+        ],
+        "tags": [
+          "Tenant"
+        ],
+        "summary": "delete a  users",
+        "operationId": "UserDelete",
+        "parameters": [
+          {
+            "type": "string",
+            "name": "user_id",
+            "in": "path",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "ok"
+          }
+        }
+      }
+    },
+    "/v1/tenants/{tenant_id}": {
+      "delete": {
+        "produces": [
+          "application/json"
+        ],
+        "tags": [
+          "Tenant"
+        ],
+        "summary": "delete a tenant",
+        "operationId": "Delete",
+        "parameters": [
+          {
+            "type": "string",
+            "description": "tenant's ID",
+            "name": "tenant_id",
+            "in": "path",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "ok"
+          }
+        }
+      }
+    }
+  },
+  "definitions": {
+    "v1.AddPermissionIn": {
+      "required": [
+        "permission_object",
+        "permission_action"
+      ],
+      "properties": {
+        "permission_action": {
+          "type": "string"
+        },
+        "permission_object": {
+          "type": "string"
+        }
+      }
+    },
+    "v1.AddRoleInDomainIn": {
+      "required": [
+        "role"
+      ],
+      "properties": {
+        "role": {
+          "type": "string"
+        }
+      }
+    },
+    "v1.PermissionCheck": {
+      "required": [
+        "user_id",
+        "permission_object",
+        "permission_action"
+      ],
+      "properties": {
+        "permission_action": {
+          "type": "string"
+        },
+        "permission_object": {
+          "type": "string"
+        },
+        "user_id": {
+          "type": "string"
+        }
+      }
+    },
+    "v1.Tenant": {
+      "required": [
+        "id",
+        "title",
+        "remark"
+      ],
+      "properties": {
+        "id": {
+          "type": "integer",
+          "format": "int32"
+        },
+        "remark": {
+          "type": "string"
+        },
+        "title": {
+          "type": "string"
+        }
+      }
+    },
+    "v1.TenantCreateOut": {
+      "required": [
+        "tenant_id",
+        "title",
+        "remark",
+        "admin"
+      ],
+      "properties": {
+        "admin": {
+          "$ref": "#/definitions/v1.UserCreateIn"
+        },
+        "remark": {
+          "type": "string"
+        },
+        "tenant_id": {
+          "type": "integer",
+          "format": "int32"
+        },
+        "title": {
+          "type": "string"
+        }
+      }
+    },
+    "v1.TenantCreteIn": {
+      "required": [
+        "title",
+        "remark",
+        "admin"
+      ],
+      "properties": {
+        "admin": {
+          "$ref": "#/definitions/v1.UserCreateIn"
+        },
+        "remark": {
+          "type": "string"
+        },
+        "title": {
+          "type": "string"
+        }
+      }
+    },
+    "v1.TokenValidIn": {
+      "required": [
+        "entity_token"
+      ],
+      "properties": {
+        "entity_token": {
+          "type": "string"
+        }
+      }
+    },
+    "v1.User": {
+      "required": [
+        "user_id",
+        "external_id",
+        "tenant_id",
+        "username",
+        "nick_name",
+        "avatar",
+        "email"
+      ],
+      "properties": {
+        "avatar": {
+          "type": "string"
+        },
+        "email": {
+          "type": "string"
+        },
+        "external_id": {
+          "type": "string"
+        },
+        "nick_name": {
+          "type": "string"
+        },
+        "tenant_id": {
+          "type": "integer",
+          "format": "int32"
+        },
+        "user_id": {
+          "type": "string"
+        },
+        "username": {
+          "type": "string"
+        }
+      }
+    },
+    "v1.UserCreateIn": {
+      "required": [
+        "tenant_id",
+        "username",
+        "password",
+        "nick_name",
+        "avatar",
+        "email"
+      ],
+      "properties": {
+        "avatar": {
+          "type": "string"
+        },
+        "email": {
+          "type": "string"
+        },
+        "nick_name": {
+          "type": "string"
+        },
+        "password": {
+          "type": "string"
+        },
+        "tenant_id": {
+          "type": "integer",
+          "format": "int32"
+        },
+        "username": {
+          "type": "string"
+        }
+      }
+    }
+  },
+  "securityDefinitions": {
+    "jwt": {
+      "type": "apiKey",
+      "name": "Authorization",
+      "in": "header"
+    }
+  },
+  "security": [
+    {
+      "jwt": []
+    }
+  ]
+}

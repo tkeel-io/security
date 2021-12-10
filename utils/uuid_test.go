@@ -11,33 +11,25 @@ See the License for the specific language governing permissions and
 limitations under the License.
 */
 
-package swagger
+package utils
 
-import (
-	"reflect"
-	"testing"
+import "testing"
 
-	"github.com/emicklei/go-restful"
-	restfulspec "github.com/emicklei/go-restful-openapi"
-)
-
-func TestGenerateSwaggerJSON(t *testing.T) {
+func TestUUIDWithPrefix(t *testing.T) {
 	type args struct {
-		c      *restful.Container
-		f      restfulspec.PostBuildSwaggerObjectFunc
-		output string
+		prefix string
+		len    int
 	}
 	tests := []struct {
 		name string
 		args args
-		want []byte
 	}{
-		// TODO: Add test cases.
+		{name: "1", args: args{prefix: "usr", len: 16}},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			if got := GenerateSwaggerJSON(tt.args.c, tt.args.f, tt.args.output); !reflect.DeepEqual(got, tt.want) {
-				t.Errorf("GenerateSwaggerJSON() = %v, want %v", got, tt.want)
+			if got := UUIDWithPrefix(tt.args.prefix, tt.args.len); got != "" {
+				t.Logf("UUIDWithPrefix() = %v", got)
 			}
 		})
 	}
