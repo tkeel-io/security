@@ -10,6 +10,7 @@ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
 limitations under the License.
 */
+
 package swagger
 
 import (
@@ -19,8 +20,8 @@ import (
 	"io/ioutil"
 	"log"
 
-	"github.com/tkeel-io/security/pkg/logger"
-	"github.com/tkeel-io/security/pkg/version"
+	"github.com/tkeel-io/security/logger"
+	"github.com/tkeel-io/security/version"
 
 	"github.com/emicklei/go-restful"
 	restfulspec "github.com/emicklei/go-restful-openapi"

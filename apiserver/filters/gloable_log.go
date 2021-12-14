@@ -11,34 +11,18 @@ See the License for the specific language governing permissions and
 limitations under the License.
 */
 
-package swagger
+package filters
 
 import (
-	"reflect"
-	"testing"
-
 	"github.com/emicklei/go-restful"
-	restfulspec "github.com/emicklei/go-restful-openapi"
+	"github.com/tkeel-io/security/logger"
 )
 
-func TestGenerateSwaggerJSON(t *testing.T) {
-	type args struct {
-		c      *restful.Container
-		f      restfulspec.PostBuildSwaggerObjectFunc
-		output string
-	}
-	tests := []struct {
-		name string
-		args args
-		want []byte
-	}{
-		// TODO: Add test cases.
-	}
-	for _, tt := range tests {
-		t.Run(tt.name, func(t *testing.T) {
-			if got := GenerateSwaggerJSON(tt.args.c, tt.args.f, tt.args.output); !reflect.DeepEqual(got, tt.want) {
-				t.Errorf("GenerateSwaggerJSON() = %v, want %v", got, tt.want)
-			}
-		})
+var _log = logger.NewLogger("auth.apiserver.filter")
+
+func GlobalLog() restful.FilterFunction {
+	return func(req *restful.Request, resp *restful.Response, chain *restful.FilterChain) {
+		_log.Infof("[%s] %s", req.Request.Method, req.Request.RequestURI)
+		chain.ProcessFilter(req, resp)
 	}
 }
