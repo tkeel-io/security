@@ -7,6 +7,7 @@ require (
 	github.com/casbin/casbin/v2 v2.39.0
 	github.com/casbin/xorm-adapter/v2 v2.4.0
 	github.com/coreos/go-oidc/v3 v3.1.0
+	github.com/dapr/go-sdk v1.3.0
 	github.com/emicklei/go-restful v2.15.0+incompatible
 	github.com/emicklei/go-restful-openapi v1.4.1
 	github.com/go-oauth2/oauth2/v4 v4.4.2
@@ -28,7 +29,7 @@ require (
 	github.com/mitchellh/mapstructure v1.4.2 // indirect
 	github.com/pkg/errors v0.9.1
 	github.com/sirupsen/logrus v1.8.1
-	github.com/spf13/cobra v1.2.1
+	github.com/spf13/cobra v1.2.1 // indirect
 	github.com/spf13/viper v1.8.1
 	github.com/stretchr/testify v1.7.0
 	go.mongodb.org/mongo-driver v1.7.4 // indirect

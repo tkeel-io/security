@@ -17,18 +17,21 @@ import (
 	"github.com/tkeel-io/security/apirouter"
 	"github.com/tkeel-io/security/apiserver/config"
 	"github.com/tkeel-io/security/constants"
+	"github.com/tkeel-io/security/errcode"
+	"github.com/tkeel-io/security/models/entity"
+	"net/http"
 
 	"github.com/emicklei/go-restful"
 	restfulspec "github.com/emicklei/go-restful-openapi"
 )
 
-func RegisterToRestContainer(c *restful.Container, conf *config.EntityConfig, authConf *config.OAuth2Config) error {
+func RegisterToRestContainer(c *restful.Container, conf *config.EntityConfig, operator entity.TokenOperator) error {
 	webservice := apirouter.GetWebserviceWithPatch(c, "/v1/entity")
-	handler := newEntityHandler(conf)
+	handler := newEntityHandler(conf, operator)
 
 	webservice.Route(webservice.GET("/{entity_type}/{entity_id}/token").
 		To(handler.Token).
-		Doc("get a entity token").
+		Doc("generate a entity token").
 		Param(webservice.PathParameter("entity_type", "EntityType").Required(true)).
 		Param(webservice.PathParameter("entity_id", "Entity's ID").Required(true)).
 		Param(webservice.QueryParameter("owner", "user`s ID").Required(true)).
@@ -41,5 +44,18 @@ func RegisterToRestContainer(c *restful.Container, conf *config.EntityConfig, au
 		Reads(TokenValidIn{}).
 		Metadata(restfulspec.KeyOpenAPITags, []string{constants.APITagEntity}))
 
+	webservice.Route(webservice.POST("/token").
+		To(handler.CreateEntityToken).
+		Doc("create a entity token").
+		Reads(EntityTokenIn{}).
+		Returns(http.StatusOK, errcode.ErrMsgOK, Token{}).
+		Metadata(restfulspec.KeyOpenAPITags, []string{constants.APITagEntity}))
+
+	webservice.Route(webservice.GET("/info/{token}").
+		To(handler.GetEntityInfo).
+		Doc("get  a entity info").
+		Param(webservice.PathParameter("token", "entity`s token")).
+		Returns(http.StatusOK, errcode.ErrMsgOK, entity.Token{}).
+		Metadata(restfulspec.KeyOpenAPITags, []string{constants.APITagEntity}))
 	return nil
 }
