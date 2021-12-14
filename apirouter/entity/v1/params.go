@@ -20,3 +20,10 @@ type Token struct {
 type TokenValidIn struct {
 	EntityToken string `json:"entity_token"`
 }
+
+type EntityTokenIn struct {
+	EntityType string `json:"entity_type"`
+	EntityID   string `json:"entity_id"`
+	Owner      string `json:"owner"`
+	ExpiresIn  int64  `json:"expires_in"`
+}

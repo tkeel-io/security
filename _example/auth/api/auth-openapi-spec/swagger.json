@@ -16,6 +16,65 @@
     "x-taggroups": []
   },
   "paths": {
+    "/v1/entity/info/{token}": {
+      "get": {
+        "produces": [
+          "application/json"
+        ],
+        "tags": [
+          "Entity"
+        ],
+        "summary": "get  a entity info",
+        "operationId": "GetEntityInfo",
+        "parameters": [
+          {
+            "type": "string",
+            "description": "entity`s token",
+            "name": "token",
+            "in": "path",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "ok",
+            "schema": {
+              "$ref": "#/definitions/entity.Token"
+            }
+          }
+        }
+      }
+    },
+    "/v1/entity/token": {
+      "post": {
+        "produces": [
+          "application/json"
+        ],
+        "tags": [
+          "Entity"
+        ],
+        "summary": "create a entity token",
+        "operationId": "CreateEntityToken",
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/v1.EntityTokenIn"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "ok",
+            "schema": {
+              "$ref": "#/definitions/v1.Token"
+            }
+          }
+        }
+      }
+    },
     "/v1/entity/token/valid": {
       "post": {
         "produces": [
@@ -51,7 +110,7 @@
         "tags": [
           "Entity"
         ],
-        "summary": "get a entity token",
+        "summary": "generate a entity token",
         "operationId": "Token",
         "parameters": [
           {
@@ -754,6 +813,34 @@
     }
   },
   "definitions": {
+    "entity.Token": {
+      "required": [
+        "entity_id",
+        "entity_type",
+        "owner",
+        "created_at",
+        "expired_at"
+      ],
+      "properties": {
+        "created_at": {
+          "type": "integer",
+          "format": "int64"
+        },
+        "entity_id": {
+          "type": "string"
+        },
+        "entity_type": {
+          "type": "string"
+        },
+        "expired_at": {
+          "type": "integer",
+          "format": "int64"
+        },
+        "owner": {
+          "type": "string"
+        }
+      }
+    },
     "v1.AddPermissionIn": {
       "required": [
         "permission_object",
@@ -774,6 +861,29 @@
       ],
       "properties": {
         "role": {
+          "type": "string"
+        }
+      }
+    },
+    "v1.EntityTokenIn": {
+      "required": [
+        "entity_type",
+        "entity_id",
+        "owner",
+        "expires_in"
+      ],
+      "properties": {
+        "entity_id": {
+          "type": "string"
+        },
+        "entity_type": {
+          "type": "string"
+        },
+        "expires_in": {
+          "type": "integer",
+          "format": "int64"
+        },
+        "owner": {
           "type": "string"
         }
       }
@@ -852,6 +962,16 @@
           "type": "string"
         },
         "title": {
+          "type": "string"
+        }
+      }
+    },
+    "v1.Token": {
+      "required": [
+        "token"
+      ],
+      "properties": {
+        "token": {
           "type": "string"
         }
       }

@@ -21,6 +21,7 @@ import (
 	"github.com/tkeel-io/security/apiserver/response"
 	"github.com/tkeel-io/security/errcode"
 	"github.com/tkeel-io/security/logger"
+	"github.com/tkeel-io/security/models/entity"
 	"github.com/tkeel-io/security/models/oauth"
 
 	"github.com/emicklei/go-restful"
@@ -32,12 +33,13 @@ var (
 )
 
 type entityHandler struct {
-	tokenOperator *oauth.JWTAccessGenerate
+	tokenOperator       *oauth.JWTAccessGenerate
+	entityTokenOperator entity.TokenOperator
 }
 
-func newEntityHandler(conf *config.EntityConfig) *entityHandler {
+func newEntityHandler(conf *config.EntityConfig, entityOperator entity.TokenOperator) *entityHandler {
 	operator := oauth.NewJWTAccessGenerate("", []byte(conf.SecurityKey), jwt.SigningMethodHS512)
-	return &entityHandler{operator}
+	return &entityHandler{operator, entityOperator}
 }
 
 func (h *entityHandler) Token(req *restful.Request, resp *restful.Response) {
@@ -93,4 +95,45 @@ func (h *entityHandler) TokenValid(req *restful.Request, resp *restful.Response)
 		return
 	}
 	response.SrvErrWithRest(resp, errcode.SuccessServe, claims)
+}
+
+func (h *entityHandler) CreateEntityToken(req *restful.Request, resp *restful.Response) {
+	in := &EntityTokenIn{}
+	err := req.ReadEntity(in)
+	if err != nil || in.EntityID == "" || in.EntityType == "" {
+		_log.Error("create entity token invalid params: ", in)
+		response.SrvErrWithRest(resp, errcode.ErrInvalidParam, nil)
+		return
+	}
+	now := time.Now()
+	if in.ExpiresIn == 0 {
+		in.ExpiresIn = now.Add(time.Hour * 24 * 365).Unix()
+	} else {
+		in.ExpiresIn = now.Add(time.Second * time.Duration(in.ExpiresIn)).Unix()
+	}
+	entityInfo := &entity.Token{
+		EntityID:   in.EntityID,
+		EntityType: in.EntityType,
+		Owner:      in.Owner,
+		CreatedAt:  now.Unix(),
+		ExpiredAt:  in.ExpiresIn,
+	}
+	token, err := h.entityTokenOperator.CreateToken(req.Request.Context(), entityInfo)
+	if err != nil {
+		_log.Error(err)
+		response.SrvErrWithRest(resp, errcode.ErrInUnexpected, nil)
+		return
+	}
+	response.SrvErrWithRest(resp, errcode.SuccessServe, Token{token})
+}
+
+func (h *entityHandler) GetEntityInfo(req *restful.Request, resp *restful.Response) {
+	token := req.PathParameter("token")
+	entityInfo, err := h.entityTokenOperator.GetEntityInfo(req.Request.Context(), token)
+	if err != nil {
+		_log.Error(err, token)
+		response.SrvErrWithRest(resp, errcode.ErrInUnexpected, nil)
+		return
+	}
+	response.SrvErrWithRest(resp, errcode.SuccessServe, entityInfo)
 }

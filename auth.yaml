@@ -26,3 +26,8 @@ oauth2:
 
 entity:
   securitykey: 77777777
+
+daprClient:
+  httpPort:
+  grpcPort: 59261
+  storeName: statestore

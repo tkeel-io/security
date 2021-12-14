@@ -30,11 +30,12 @@ const (
 )
 
 type Config struct {
-	Server   *ServerConfig   `json:"server" yaml:"server"`
-	Database *DatabaseConfig `json:"database" yaml:"database"`
-	Oauth2   *OAuth2Config   `json:"oauth2" yaml:"oauth2"`
-	RBAC     *RBACConfig     `json:"rbac" yaml:"rbac"`
-	Entity   *EntityConfig   `json:"entity" yaml:"entity"`
+	Server     *ServerConfig     `json:"server" yaml:"server"`
+	Database   *DatabaseConfig   `json:"database" yaml:"database"`
+	Oauth2     *OAuth2Config     `json:"oauth2" yaml:"oauth2"`
+	RBAC       *RBACConfig       `json:"rbac" yaml:"rbac"`
+	Entity     *EntityConfig     `json:"entity" yaml:"entity"`
+	DaprClient *DAPRClientConfig `json:"dapr_client" yaml:"daprClient"`
 }
 
 type ServerConfig struct {
@@ -72,6 +73,12 @@ type RedisConf struct {
 type AccessConf struct {
 	AccessTokenExp string `json:"access_token_exp" yaml:"accessTokenExp"`
 	SecurityKey    string `json:"security_key" yaml:"securityKey"`
+}
+
+type DAPRClientConfig struct {
+	StoreName string `json:"store_name" yaml:"storeName"`
+	HTTPPort  string `json:"http_port" yaml:"httpPort"`
+	GRPCPort  string `json:"grpc_port" yaml:"grpcPort"`
 }
 
 func New() *Config {

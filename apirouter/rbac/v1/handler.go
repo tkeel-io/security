@@ -154,6 +154,7 @@ func (h *rbacHandler) AddRoleToUser(req *restful.Request, resp *restful.Response
 	if err != nil || !ok {
 		_log.Error(err)
 		response.SrvErrWithRest(resp, errcode.ErrInUnexpected, nil)
+		return
 	}
 	response.SrvErrWithRest(resp, errcode.SuccessServe, groupingPolices)
 }

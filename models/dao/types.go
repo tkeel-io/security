@@ -60,6 +60,3 @@ func formatPage(db *gorm.DB, page *Page) {
 func GenUserID(tenantID int) string {
 	return utils.UUIDWithPrefix(fmt.Sprintf("%s-%d", _userPrefix, tenantID), _defaultLen)
 }
-func GenUserIDWithStr(tenantID string) string {
-	return utils.UUIDWithPrefix(fmt.Sprintf("%s-%s", _userPrefix, tenantID), _defaultLen)
-}

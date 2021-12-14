@@ -25,6 +25,7 @@ import (
 	"github.com/tkeel-io/security/apiserver/filters"
 	"github.com/tkeel-io/security/logger"
 	"github.com/tkeel-io/security/models/dao"
+	"github.com/tkeel-io/security/models/entity"
 	"github.com/tkeel-io/security/tools/swagger"
 
 	"github.com/emicklei/go-restful"
@@ -77,11 +78,14 @@ func (s *APIServer) PrepareRun(stopCh <-chan struct{}) error {
 }
 
 func (s *APIServer) installApis() {
+	daprC, err := entity.NewGPRCClient(5, "10s", s.Config.DaprClient.GRPCPort)
+	must(err)
+	entityTokenOperator := entity.NewEntityTokenOperator(s.Config.DaprClient.StoreName, daprC)
 	s.restContainer.Filter(filters.GlobalLog())
 	must(oauthV1.RegisterToRestContainer(s.restContainer, s.Config.Oauth2))
 	must(rbacrouter.RegisterToRestContainer(s.restContainer, s.Config.RBAC, s.Config.Oauth2))
 	must(tenantrouter.RegisterToRestContainer(s.restContainer))
-	must(entityrouter.RegisterToRestContainer(s.restContainer, s.Config.Entity, s.Config.Oauth2))
+	must(entityrouter.RegisterToRestContainer(s.restContainer, s.Config.Entity, entityTokenOperator))
 }
 
 func must(err error) {
