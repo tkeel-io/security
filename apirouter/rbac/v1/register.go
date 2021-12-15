@@ -18,7 +18,6 @@ import (
 
 	"github.com/tkeel-io/security/apirouter"
 	"github.com/tkeel-io/security/apiserver/config"
-	"github.com/tkeel-io/security/apiserver/filters"
 	"github.com/tkeel-io/security/constants"
 	"github.com/tkeel-io/security/errcode"
 
@@ -28,7 +27,6 @@ import (
 
 func RegisterToRestContainer(c *restful.Container, conf *config.RBACConfig, authConf *config.OAuth2Config) error {
 	webservice := apirouter.GetWebserviceWithPatch(c, "/v1/rbac")
-	webservice.Filter(filters.AuthFilter(authConf))
 	handler := newRBACHandler(conf)
 
 	webservice.Route(webservice.POST("/{tenant_id}/roles").
