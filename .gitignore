@@ -31,3 +31,5 @@ google
 */tip*
 golint
 
+./auth.yaml
+
