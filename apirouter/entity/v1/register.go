@@ -14,12 +14,13 @@ limitations under the License.
 package v1
 
 import (
+	"net/http"
+
 	"github.com/tkeel-io/security/apirouter"
 	"github.com/tkeel-io/security/apiserver/config"
 	"github.com/tkeel-io/security/constants"
 	"github.com/tkeel-io/security/errcode"
 	"github.com/tkeel-io/security/models/entity"
-	"net/http"
 
 	"github.com/emicklei/go-restful"
 	restfulspec "github.com/emicklei/go-restful-openapi"

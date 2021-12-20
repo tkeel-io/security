@@ -83,7 +83,7 @@ func (s *APIServer) installApis() {
 	entityTokenOperator := entity.NewEntityTokenOperator(s.Config.DaprClient.StoreName, daprC)
 	s.restContainer.Filter(filters.GlobalLog())
 	must(oauthV1.RegisterToRestContainer(s.restContainer, s.Config.Oauth2))
-	must(rbacrouter.RegisterToRestContainer(s.restContainer, s.Config.RBAC, s.Config.Oauth2))
+	must(rbacrouter.RegisterToRestContainer(s.restContainer, s.Config.RBAC))
 	must(tenantrouter.RegisterToRestContainer(s.restContainer))
 	must(entityrouter.RegisterToRestContainer(s.restContainer, s.Config.Entity, entityTokenOperator))
 }
