@@ -18,6 +18,7 @@ import (
 	"strconv"
 
 	"github.com/tkeel-io/security/apiserver/response"
+	"github.com/tkeel-io/security/constants"
 	"github.com/tkeel-io/security/errcode"
 	"github.com/tkeel-io/security/logger"
 	dao2 "github.com/tkeel-io/security/models/dao"
@@ -63,6 +64,12 @@ func (h *tenantHandler) Create(req *restful.Request, resp *restful.Response) {
 		Title:  tenant.Title,
 		Remark: tenant.Remark,
 	}
+	// add group policy for tenant plugin manage.
+	rbac2.AddGroupingPolicy(&rbac2.GroupingPolicy{
+		Subject: fmt.Sprintf("%duser", tenant.ID),
+		Role:    fmt.Sprintf("%drole", tenant.ID),
+		Domain:  constants.SysTenant,
+	})
 
 	if in.Admin != nil {
 		user := dao2.User{

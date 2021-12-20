@@ -33,6 +33,13 @@ const (
 	ProviderLDAP = "LDAP"
 )
 
+// Abstract tenants, used to manage tenants.
+const (
+	// SysTenant Abstract tenant.
+	SysTenant          = "systenant"
+	SysPluginActionUse = "use"
+)
+
 const (
 	// OauthClient clientID.
 	OauthClient = "000000"
