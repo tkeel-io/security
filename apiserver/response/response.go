@@ -31,7 +31,7 @@ type responseData struct {
 func SrvErrWithRest(resp *restful.Response, srvErr *errcode2.SrvError, data interface{}) {
 	status := errcode2.CodeToStatus(srvErr.Code())
 	resp.WriteHeaderAndEntity(status, responseData{
-		Code: srvErr.Code(),
+		Code: status,
 		Msg:  srvErr.Msg(),
 		Data: data,
 	})
@@ -39,7 +39,7 @@ func SrvErrWithRest(resp *restful.Response, srvErr *errcode2.SrvError, data inte
 
 func DefineWithRest(resp *restful.Response, status, code int, msg string, data interface{}) {
 	resp.WriteHeaderAndEntity(status, responseData{
-		Code: code,
+		Code: status,
 		Msg:  msg,
 		Data: data,
 	})
@@ -49,7 +49,7 @@ func SrvErrWithWriter(w http.ResponseWriter, serErr *errcode2.SrvError, data int
 	status := errcode2.CodeToStatus(serErr.Code())
 	w.WriteHeader(status)
 	resp := responseData{
-		Code: serErr.Code(),
+		Code: status,
 		Msg:  serErr.Msg(),
 		Data: data,
 	}
@@ -61,7 +61,7 @@ func SrvErrWithWriter(w http.ResponseWriter, serErr *errcode2.SrvError, data int
 func DefineWithWriter(w http.ResponseWriter, status, code int, msg string, data interface{}) {
 	w.WriteHeader(status)
 	resp := responseData{
-		Code: code,
+		Code: status,
 		Msg:  msg,
 		Data: data,
 	}
