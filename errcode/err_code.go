@@ -20,7 +20,7 @@ import "net/http"
 // the HTTP status code 0~700 is compatible.
 const (
 	// CodeSuccess.
-	CodeSuccess = 0
+	CodeSuccess = 200
 	// CodeUnexpectedError.
 	CodeUnexpectedError = iota + 10000
 	CodeInvalidAccessToken

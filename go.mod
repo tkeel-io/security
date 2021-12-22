@@ -22,6 +22,7 @@ require (
 	github.com/go-sql-driver/mysql v1.6.0
 	github.com/go-stack/stack v1.8.1 // indirect
 	github.com/golang-jwt/jwt v3.2.1+incompatible
+	github.com/google/gnostic v0.5.7 // indirect
 	github.com/google/uuid v1.3.0
 	github.com/json-iterator/go v1.1.12 // indirect
 	github.com/lib/pq v1.10.2 // indirect
@@ -36,6 +37,7 @@ require (
 	golang.org/x/crypto v0.0.0-20210921155107-089bfa567519
 	golang.org/x/net v0.0.0-20211109214657-ef0fda0de508 // indirect
 	golang.org/x/oauth2 v0.0.0-20210402161424-2e8d93401602
+	google.golang.org/protobuf v1.27.1 // indirect
 	gorm.io/driver/mysql v1.1.3
 	gorm.io/gorm v1.22.2
 )

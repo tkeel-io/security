@@ -25,7 +25,7 @@ import (
 	restfulspec "github.com/emicklei/go-restful-openapi"
 )
 
-func RegisterToRestContainer(c *restful.Container, conf *config.RBACConfig, authConf *config.OAuth2Config) error {
+func RegisterToRestContainer(c *restful.Container, conf *config.RBACConfig) error {
 	webservice := apirouter.GetWebserviceWithPatch(c, "/v1/rbac")
 	handler := newRBACHandler(conf)
 
