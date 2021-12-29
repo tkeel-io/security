@@ -39,12 +39,12 @@ type Validator struct {
 	httpGetter    http.Client
 	httpReq       http.Request
 	method        string
-	options       []OptionFunc
+	options       []ValidatorOption
 	verifyFunc    Verify
 	serializeFunc Serialize
 }
 
-func NewValidator(remote string, license []byte, vFunc Verify, options ...OptionFunc) Validator {
+func NewValidator(remote string, license []byte, vFunc Verify, options ...ValidatorOption) Validator {
 	return Validator{
 		Raw:        license,
 		remote:     remote,
@@ -53,7 +53,7 @@ func NewValidator(remote string, license []byte, vFunc Verify, options ...Option
 	}
 }
 
-func (l *Validator) SetOptions(opts ...OptionFunc) {
+func (l *Validator) SetOptions(opts ...ValidatorOption) {
 	l.options = append(l.options, opts...)
 }
 
@@ -118,32 +118,32 @@ func (l *Validator) Verify() error {
 	return ErrUnableLicense
 }
 
-type OptionFunc func(*Validator) error
+type ValidatorOption func(*Validator) error
 type Verify func(response http.Response) bool
 type Serialize func(*Validator) ([]byte, error)
 
-func WithPOST() OptionFunc {
+func WithPOST() ValidatorOption {
 	return func(l *Validator) error {
 		l.method = _post
 		return nil
 	}
 }
 
-func WithGET() OptionFunc {
+func WithGET() ValidatorOption {
 	return func(l *Validator) error {
 		l.method = _get
 		return nil
 	}
 }
 
-func WithPUT() OptionFunc {
+func WithPUT() ValidatorOption {
 	return func(l *Validator) error {
 		l.method = _put
 		return nil
 	}
 }
 
-func SerializeWithJSON() OptionFunc {
+func SerializeWithJSON() ValidatorOption {
 	return func(l *Validator) error {
 		l.serializeFunc = toJSON
 		return nil
