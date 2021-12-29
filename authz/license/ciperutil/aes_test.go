@@ -1,8 +1,9 @@
 package ciperutil
 
 import (
-	"github.com/stretchr/testify/assert"
 	"testing"
+
+	"github.com/stretchr/testify/assert"
 )
 
 func TestEncryptAndDecrypt(t *testing.T) {
@@ -11,7 +12,9 @@ func TestEncryptAndDecrypt(t *testing.T) {
 
 	assert.Equal(t, 32, len([]byte(key)))
 
-	e := AesEncrypt(content, key)
-	d := AesDecrypt(e, key)
+	e, err := AESEncrypt(content, key)
+	assert.Nil(t, err)
+	d, err := AESDecrypt(e, key)
+	assert.Nil(t, err)
 	assert.Equal(t, content, d)
 }

@@ -73,7 +73,10 @@ func (l *License) Issue() (string, error) {
 	if err != nil {
 		return "", err
 	}
-	aesencr := ciperutil.AesEncrypt(string(info), aesKey32)
+	aesencr, err := ciperutil.AESEncrypt(string(info), aesKey32)
+	if err != nil {
+		return "", err
+	}
 	privpem, err := ciperutil.ParseRSAPrivateKeyFromPEM(l.secret)
 	if err != nil {
 		return "", err
@@ -122,7 +125,10 @@ func (l *License) Parse() (map[string]string, error) {
 	if err != nil {
 		return nil, err
 	}
-	decr := ciperutil.AesDecrypt(aesEncr, aeskey32)
+	decr, err := ciperutil.AESDecrypt(aesEncr, aeskey32)
+	if err != nil {
+		return nil, err
+	}
 	rsadecr, err := ciperutil.RSAPublicDecrypt(keypem, decode)
 	if err != nil {
 		return nil, err

@@ -25,6 +25,9 @@ func TestGenerateRandString(t *testing.T) {
 func TestAesEncryptAndDecrypt(t *testing.T) {
 	cipher := GenerateCipherKey32()
 	data := "secret_data"
-	en := AesEncrypt(data, cipher)
-	assert.Equal(t, data, AesDecrypt(en, cipher))
+	en, err := AESEncrypt(data, cipher)
+	assert.Nil(t, err)
+	dd, err := AESDecrypt(en, cipher)
+	assert.Nil(t, err)
+	assert.Equal(t, data, dd)
 }
