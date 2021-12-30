@@ -63,7 +63,7 @@ func TestIssuer(t *testing.T) {
 
 func TestParser(t *testing.T) {
 	license := "bphBbgzmiegpcryAlvfcpAisFlpywxvy002c1EOR+k7hmyX802ZIaexpXuWxjkZpLm31gSIb6zamRQQ=SkT8fCbsu2qtI7a/sjyeXGBRQSQX4hSBePYX/u626xmBiEW5a6G4sWlfd6L/ESWcnSddaNwShJBwIb4ew6Ub0BA2M4FnZUQ2ZjCl+hpuhaOQLp0Ik7MiU8SDgVhNVQ2guXma54SgKfUJ4facfmRDKVYcxdEiJucs0fFnFmk3if1I+E6OxF1nt+SOp2uFRd56upKz4ylBTB6e6NDSw8H9lhSNHbB1xSECaTV9jeu+CcX7JebrurlCXNHuGw5Lyx+8wQM1BDsi90pJzSrSYyYOzRBCUUvd7GXQsY4gTvyov7C0HbObPoWpot4Kjdj8yosBMGLlY5C39MYYxm6FUth35A=="
-	parser := NewLicenseParser(license, WithPublicKey(_pub_key))
+	parser := NewParser(license, WithPublicKey(_pub_key))
 	info, err := parser.Parse()
 	fmt.Printf("%+v\n", info)
 	assert.Nil(t, err)

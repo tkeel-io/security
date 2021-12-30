@@ -36,7 +36,7 @@ type License struct {
 	content string
 }
 
-func NewLicenseParser(content string, opts ...Option) Parser {
+func NewParser(content string, opts ...Option) Parser {
 	return &License{content: content, options: opts, Info: map[string]string{}}
 }
 
