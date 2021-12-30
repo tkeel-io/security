@@ -100,6 +100,10 @@ func (l *License) Parse() (map[string]string, error) {
 	if l.key == "" {
 		return nil, ErrNoPublicKey
 	}
+	return l.parse()
+}
+
+func (l *License) parse() (map[string]string, error) {
 	keypem, err := ciperutil.ParseRSAPublicKeyFromPEM(l.key)
 	if err != nil {
 		return nil, err
@@ -107,7 +111,9 @@ func (l *License) Parse() (map[string]string, error) {
 	if l.content == "" || len(l.content) < 32 {
 		return nil, ErrInvalidLicenseContent
 	}
-	aeskey32 := l.content[:32]
+
+	// get aes key and decrypt aes encrypted content.
+	aeskey := l.content[:32]
 	if len(l.content) < 36 {
 		return nil, ErrInvalidLicenseContent
 	}
@@ -120,12 +126,14 @@ func (l *License) Parse() (map[string]string, error) {
 		return nil, ErrInvalidLicenseContent
 	}
 	aesEncr := l.content[36 : 36+int(aesEncrLen)]
+
+	// get rsa encrypted content and decrypt it by public key.
 	rsaSigned := l.content[36+int(aesEncrLen):]
 	decode, err := base64.StdEncoding.DecodeString(rsaSigned)
 	if err != nil {
 		return nil, err
 	}
-	decr, err := ciperutil.AESDecrypt(aesEncr, aeskey32)
+	decr, err := ciperutil.AESDecrypt(aesEncr, aeskey)
 	if err != nil {
 		return nil, err
 	}
@@ -134,6 +142,7 @@ func (l *License) Parse() (map[string]string, error) {
 		return nil, err
 	}
 
+	// compare two decrypted.
 	if decr != string(rsadecr) {
 		return nil, ErrInvalidParsedInfo
 	}

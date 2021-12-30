@@ -10,18 +10,18 @@ import (
 )
 
 const (
-	_http      = "http"
-	_localhost = "http://127.0.0.1"
-	_hostPath  = "license"
+	_schemaHTTP         = "http"
+	_localhost          = "http://127.0.0.1"
+	_requestPathLicense = "license"
 
-	_post = "POST"
-	_get  = "GET"
-	_put  = "PUT"
+	_httpMethodPost = "POST"
+	_httpMethodGet  = "GET"
+	_httpMethodPut  = "PUT"
 )
 
 var (
 	ErrInvalidRequest = errors.New("invalid request")
-	ErrUnableLicense  = errors.New("license is unable")
+	ErrInvalidLicense = errors.New("license is invalid")
 )
 
 type Verifier interface {
@@ -32,7 +32,7 @@ var _ Verifier = &Validator{}
 
 type Validator struct {
 	// Raw is the original license content.
-	Raw []byte `json:"Raw"`
+	Raw string `json:"Raw"`
 
 	// validate request target remote address.
 	remote        string
@@ -44,7 +44,7 @@ type Validator struct {
 	serializeFunc Serialize
 }
 
-func NewValidator(remote string, license []byte, vFunc Verify, options ...ValidatorOption) Validator {
+func NewValidator(remote, license string, vFunc Verify, options ...ValidatorOption) Validator {
 	return Validator{
 		Raw:        license,
 		remote:     remote,
@@ -73,9 +73,9 @@ func (l *Validator) Verify() error {
 	}
 
 	u := &url.URL{
-		Scheme: _http,
+		Scheme: _schemaHTTP,
 		Host:   _localhost,
-		Path:   _hostPath,
+		Path:   _requestPathLicense,
 	}
 	if l.remote != "" {
 		var err error
@@ -88,9 +88,9 @@ func (l *Validator) Verify() error {
 	l.httpReq.Method = l.method
 	l.httpReq.URL = u
 	switch l.method {
-	case _get:
+	case _httpMethodGet:
 		l.httpReq.URL.RawQuery = url.QueryEscape(fmt.Sprintf("Raw=%s", l.Raw))
-	case _post, _put:
+	case _httpMethodPost, _httpMethodPut:
 		c, err := l.serializeFunc(l)
 		if err != nil {
 			return err
@@ -100,8 +100,8 @@ func (l *Validator) Verify() error {
 			return err
 		}
 	default:
-		l.method = _get
-		l.httpReq.Method = _get
+		l.method = _httpMethodGet
+		l.httpReq.Method = _httpMethodGet
 		l.httpReq.URL.RawQuery = url.QueryEscape(fmt.Sprintf("Raw=%s", l.Raw))
 	}
 
@@ -115,7 +115,7 @@ func (l *Validator) Verify() error {
 		return nil
 	}
 
-	return ErrUnableLicense
+	return ErrInvalidLicense
 }
 
 type ValidatorOption func(*Validator) error
@@ -124,21 +124,21 @@ type Serialize func(*Validator) ([]byte, error)
 
 func WithPOST() ValidatorOption {
 	return func(l *Validator) error {
-		l.method = _post
+		l.method = _httpMethodPost
 		return nil
 	}
 }
 
 func WithGET() ValidatorOption {
 	return func(l *Validator) error {
-		l.method = _get
+		l.method = _httpMethodGet
 		return nil
 	}
 }
 
 func WithPUT() ValidatorOption {
 	return func(l *Validator) error {
-		l.method = _put
+		l.method = _httpMethodPut
 		return nil
 	}
 }
