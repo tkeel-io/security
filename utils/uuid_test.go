@@ -13,9 +13,13 @@ limitations under the License.
 
 package utils
 
-import "testing"
+import (
+	"testing"
 
-func TestUUIDWithPrefix(t *testing.T) {
+	"github.com/stretchr/testify/assert"
+)
+
+func TestRandStringWithPrefix(t *testing.T) {
 	type args struct {
 		prefix string
 		len    int
@@ -28,9 +32,33 @@ func TestUUIDWithPrefix(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			if got := UUIDWithPrefix(tt.args.prefix, tt.args.len); got != "" {
-				t.Logf("UUIDWithPrefix() = %v", got)
+			if got, _ := RandStringWithPrefix(tt.args.prefix, tt.args.len); got != "" {
+				t.Logf("RandStringWithPrefix() = %v", got)
 			}
+		})
+	}
+}
+
+func TestRandString(t *testing.T) {
+	type args struct {
+		length int
+	}
+	tests := []struct {
+		name    string
+		args    args
+		wantErr bool
+	}{
+		{"a", args{4}, false},
+		{"b", args{6}, false},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			got, err := RandBase64String(tt.args.length)
+			if (err != nil) != tt.wantErr {
+				t.Errorf("RandBase64String() error = %v, wantErr %v", err, tt.wantErr)
+				return
+			}
+			assert.NotNil(t, got)
 		})
 	}
 }
