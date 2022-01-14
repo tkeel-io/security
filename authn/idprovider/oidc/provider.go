@@ -189,6 +189,7 @@ func (o *oidcProvider) AuthenticateCode(code string) (idprovider.Identity, error
 	// todo  creat in internal user.
 }
 
+//nolint
 func (o *oidcProvider) Authenticate(username string, password string) (idprovider.Identity, error) {
 	return nil, errors.New("unsupported authenticate with username password")
 }

@@ -38,6 +38,7 @@ func (f *oidcProviderFactory) Type() string {
 	return _oidcIdentityType
 }
 
+//nolint
 func (f *oidcProviderFactory) Create(options map[string]interface{}) (idprovider.Provider, error) {
 	var oidcProvider oidcProvider
 	if err := mapstructure.Decode(options, &oidcProvider); err != nil {

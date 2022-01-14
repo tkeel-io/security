@@ -29,6 +29,7 @@ func (l *ldapProviderFactory) Type() string {
 	return _ldapIdentityProvider
 }
 
+//nolint
 func (l *ldapProviderFactory) Create(options map[string]interface{}) (idprovider.Provider, error) {
 	var ldapProvider ldapProvider
 	if err := mapstructure.Decode(options, &ldapProvider); err != nil {

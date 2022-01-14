@@ -35,6 +35,7 @@ func (f casProviderFactory) Type() string {
 	return "CASIdentityProvider"
 }
 
+//nolint
 func (f casProviderFactory) Create(options map[string]interface{}) (idprovider.Provider, error) {
 	var cas casProvider
 	if err := mapstructure.Decode(options, &cas); err != nil {

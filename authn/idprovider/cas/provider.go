@@ -25,8 +25,8 @@ import (
 const _casIdentityProvider = "CASIdentityProvider"
 
 type casProvider struct {
-	RedirectURL        string `json:"redirect_url" yaml:"redirectURL"`
-	CASServerURL       string `json:"casServer_url" yaml:"casServerURL"`
+	RedirectURL        string `json:"redirect_url" yaml:"redirectURL"` //nolint
+	CASServerURL       string `json:"cas_server_url" yaml:"casServerURL"`
 	InsecureSkipVerify bool   `json:"insecure_skip_verify" yaml:"insecureSkipVerify"`
 	client             *gocas.RestClient
 }
@@ -35,6 +35,7 @@ func (c casProvider) Type() string {
 	return _casIdentityProvider
 }
 
+//nolint
 func (c casProvider) AuthenticateCode(ticket string) (idprovider.Identity, error) {
 	resp, err := c.client.ValidateServiceTicket(gocas.ServiceTicket(ticket))
 	if err != nil {
@@ -43,6 +44,7 @@ func (c casProvider) AuthenticateCode(ticket string) (idprovider.Identity, error
 	return &casIdentity{User: resp.User}, nil
 }
 
+//nolint
 func (c casProvider) Authenticate(username string, password string) (idprovider.Identity, error) {
 	return nil, errors.New("unsupported authenticate with username password")
 }

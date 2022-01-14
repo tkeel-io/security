@@ -30,6 +30,7 @@ func RegisterProviderFactory(factory ProviderFactory) {
 	_providerFactories[factory.Type()] = factory
 }
 
+//nolint
 // GetIdentityProvider returns identity Provider with key.
 func GetIdentityProvider(key string) (Provider, error) {
 	if provider, ok := _providers[key]; ok {

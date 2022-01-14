@@ -75,6 +75,12 @@ func (u *User) Create(db *gorm.DB) error {
 	return db.Create(u).Error
 }
 
+func (u *User) CountInTenant(db *gorm.DB, tenantID string) (int64, error) {
+	var i int64
+	err := db.Model(u).Where("tenant_id = ?", tenantID).Count(&i).Error
+	return i, err
+}
+
 func (u *User) Delete(db *gorm.DB) error {
 	if u.ID == "" {
 		return errors.New("empty user_id on delete")
@@ -86,17 +92,20 @@ func (u *User) Delete(db *gorm.DB) error {
 	return nil
 }
 
+func (u *User) DeleteAllInTenant(db *gorm.DB, tenantID string) error {
+	return db.Delete(u, "tenant_id = ?", tenantID).Error
+}
+
 // QueryByCondition query by condition (todo fix page).
-func (u *User) QueryByCondition(db *gorm.DB, condition map[string]interface{}) (users []*User, err error) {
+func (u *User) QueryByCondition(db *gorm.DB, condition map[string]interface{}, page *Page) (total int64, users []*User, err error) {
 	if condition == nil {
-		return nil, errors.New("query user condition is empty")
+		return total, nil, errors.New("query user condition is empty")
 	}
-	userID, ok := condition["user_id"]
-	if ok {
-		user := &User{ID: userID.(string)}
-		db.First(user)
+	db = db.Model(&User{}).Where(condition).Count(&total)
+	if page != nil {
+		formatPage(db, page)
 	}
-	err = db.Model(&User{}).Where(condition).Find(&users).Error
+	err = db.Find(&users).Error
 	if errors.Is(err, gorm.ErrRecordNotFound) {
 		err = nil
 	}
