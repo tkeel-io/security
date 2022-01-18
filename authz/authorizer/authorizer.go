@@ -24,6 +24,13 @@ const (
 
 type Decision int
 
+type AuthZReq interface {
+	GetUser() string
+	GetTenant() string
+	OptObject() string
+	OptAction() string
+}
+
 type Authorizer interface {
-	Authorize() (Decision, error)
+	Authorize(req AuthZReq) (Decision, error)
 }

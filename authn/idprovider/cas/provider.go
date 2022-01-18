@@ -25,8 +25,8 @@ import (
 const _casIdentityProvider = "CASIdentityProvider"
 
 type casProvider struct {
-	RedirectURL        string `json:"redirect_url" yaml:"redirectURL"` //nolint
-	CASServerURL       string `json:"cas_server_url" yaml:"casServerURL"`
+	RedirectURL        string `json:"redirect_url" yaml:"redirectURL"`    //nolint
+	CASServerURL       string `json:"cas_server_url" yaml:"casServerURL"` //nolint
 	InsecureSkipVerify bool   `json:"insecure_skip_verify" yaml:"insecureSkipVerify"`
 	client             *gocas.RestClient
 }

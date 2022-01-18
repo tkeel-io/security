@@ -142,7 +142,7 @@ func (l *ldapProvider) newConn() (*ldap.Conn, error) {
 	tlsConfig.RootCAs = x509.NewCertPool()
 	var caCert []byte
 	var err error
-	// Load CA cert
+	// Load CA cert.
 	if l.RootCA != "" {
 		if caCert, err = ioutil.ReadFile(l.RootCA); err != nil {
 			return nil, err

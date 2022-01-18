@@ -31,13 +31,13 @@ func StringsInclude(slice []string, s string) bool {
 }
 
 // StringsUniqueAppend appends a string if not exist in the slice.
-func StringsUniqueAppend(slice []string, s ...string) []string {
-	for i := range s {
-		if StringsIndexOf(slice, s[i]) != -1 {
+func StringsUniqueAppend(slice []string, str ...string) []string {
+	for i := range str {
+		if StringsIndexOf(slice, str[i]) != -1 {
 			continue
 		}
 
-		slice = append(slice, s[i])
+		slice = append(slice, str[i])
 	}
 
 	return slice

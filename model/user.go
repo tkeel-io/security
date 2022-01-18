@@ -140,7 +140,7 @@ func MappingFromExternal(db *gorm.DB, externalID, name, email, tenantID string) 
 	return users[0], nil
 }
 
-func AuthenticateUser(db gorm.DB, tenantID, username, password string) (*User, error) {
+func AuthenticateUser(db *gorm.DB, tenantID, username, password string) (*User, error) {
 	user := &User{}
 	err := db.Model(user).Where("tenant_id = ? and username = ? ", tenantID, username).First(user).Error
 	if err != nil {
