@@ -35,6 +35,12 @@ func GormMySQLByConfig(conf DBConfig) (*gorm.DB, error) {
 		return nil, fmt.Errorf("set up gorm db %w", err)
 	}
 	sqlDB, _ := _db.DB()
+	if conf.MaxOpenConns == 0 {
+		conf.MaxOpenConns = 10
+	}
+	if conf.MaxIdleConns == 0 {
+		conf.MaxIdleConns = 10
+	}
 	sqlDB.SetMaxIdleConns(conf.MaxIdleConns)
 	sqlDB.SetMaxOpenConns(conf.MaxOpenConns)
 	return _db, nil
