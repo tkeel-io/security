@@ -24,6 +24,7 @@ type TenantPluginMgr interface {
 	DeleteTenantPlugin(tenantID, pluginID string) (bool, error)
 	ListTenantPlugins(tenantID string) []string
 	TenantPluginPermissible(tenantID, pluginID string) (bool, error)
+	OnCreateTenant(tenantID string) (bool, error)
 }
 
 const (
