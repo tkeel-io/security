@@ -20,7 +20,7 @@ import (
 )
 
 type Tenant struct {
-	ID     string `json:"id" gorm:"primaryKey;type:int;comment:租户ID"`
+	ID     string `json:"id" gorm:"primaryKey;type:varchar(32);comment:租户ID"`
 	Title  string `json:"title" gorm:"type:varchar(128);comment:租户标题; not null;index"`
 	Remark string `json:"remark" gorm:"type:varchar(255);comment:备注"`
 }
