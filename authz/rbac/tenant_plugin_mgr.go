@@ -73,7 +73,7 @@ func (t *TenantPluginOperator) ListTenantPlugins(tenantID string) (pluginIDs []s
 }
 
 func (t *TenantPluginOperator) TenantPluginPermissible(tenantID, pluginID string) (ok bool, err error) {
-	user := fmt.Sprintf("%%s", sysUser, tenantID)
+	user := fmt.Sprintf("%s%s", sysUser, tenantID)
 	ok, err = t.RBACOperator.Enforce(user, SysTenant, pluginID, SysPluginActionUse)
 	if err != nil {
 		err = fmt.Errorf("%w", err)
