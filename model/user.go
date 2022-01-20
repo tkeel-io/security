@@ -69,8 +69,12 @@ func (u *User) Existed(db *gorm.DB) (existed bool, err error) {
 }
 
 func (u *User) Create(db *gorm.DB) error {
+	var err error
 	if u.ID == "" {
-		return errors.New("user id empty")
+		u.ID, err = GenUserID()
+		if err != nil {
+			return err
+		}
 	}
 	return db.Create(u).Error
 }
