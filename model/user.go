@@ -118,6 +118,9 @@ func (u *User) QueryByCondition(db *gorm.DB, condition map[string]interface{}, p
 	}
 	return
 }
+func (u *User) Update(db *gorm.DB, tenantID, userID string, updates map[string]interface{}) error {
+	return db.Model(u).Where("id = ? and tenant_id = ?", userID, tenantID).UpdateColumns(updates).Error
+}
 
 func MappingFromExternal(db *gorm.DB, externalID, name, email, tenantID string) (*User, error) {
 	users := make([]*User, 0)
