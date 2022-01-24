@@ -16,6 +16,7 @@ package model
 import (
 	"errors"
 	"fmt"
+	"time"
 
 	"github.com/tkeel-io/security/utils"
 
@@ -32,6 +33,8 @@ type User struct {
 	NickName   string `json:"nick_name" gorm:"type:varchar(128);comment:昵称"`
 	Avatar     string `json:"avatar" gorm:"type:varchar(255);comment:头像"`
 	Email      string `json:"email" gorm:"type:varchar(128);column:email;comment:邮箱"`
+	CreatedAt  time.Time
+	UpdatedAt  time.Time
 }
 
 func (User) TableName() string {
