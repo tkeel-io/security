@@ -25,16 +25,16 @@ import (
 )
 
 type User struct {
-	ID         string `json:"id" gorm:"primaryKey"`
-	ExternalID string `json:"external_id" gorm:"type:varchar(128);default:'';uniqueIndex:user_tenant"`
-	TenantID   string `json:"tenant_id" gorm:"type:varchar(32);column:tenant_id;not null;uniqueIndex:user_tenant"`
-	UserName   string `json:"username" gorm:"type:varchar(64);column:username;not null;uniqueIndex:user_tenant"` // nolint
-	Password   string `json:"-" gorm:"type:varchar(128);column:password;not null"`
-	NickName   string `json:"nick_name" gorm:"type:varchar(128);comment:昵称"`
-	Avatar     string `json:"avatar" gorm:"type:varchar(255);comment:头像"`
-	Email      string `json:"email" gorm:"type:varchar(128);column:email;comment:邮箱"`
-	CreatedAt  time.Time
-	UpdatedAt  time.Time
+	ID         string    `json:"id" gorm:"primaryKey"`
+	ExternalID string    `json:"external_id" gorm:"type:varchar(128);default:'';uniqueIndex:user_tenant"`
+	TenantID   string    `json:"tenant_id" gorm:"type:varchar(32);column:tenant_id;not null;uniqueIndex:user_tenant"`
+	UserName   string    `json:"username" gorm:"type:varchar(64);column:username;not null;uniqueIndex:user_tenant"` // nolint
+	Password   string    `json:"-" gorm:"type:varchar(128);column:password;not null"`
+	NickName   string    `json:"nick_name" gorm:"type:varchar(128);comment:昵称"`
+	Avatar     string    `json:"avatar" gorm:"type:varchar(255);comment:头像"`
+	Email      string    `json:"email" gorm:"type:varchar(128);column:email;comment:邮箱"`
+	CreatedAt  time.Time `json:"created_at"`
+	UpdatedAt  time.Time `json:"updated_at"`
 }
 
 func (User) TableName() string {

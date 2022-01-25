@@ -37,7 +37,10 @@ type DBConfig struct {
 }
 
 func (conf *DBConfig) MysqlDsn() string {
-	return conf.Username + ":" + conf.Password + "@tcp(" + conf.Host + ":" + conf.Port + ")/" + conf.Dbname + "?" + conf.Config
+	if conf.Config != "" {
+		return conf.Username + ":" + conf.Password + "@tcp(" + conf.Host + ":" + conf.Port + ")/" + conf.Dbname + "?" + conf.Config
+	}
+	return conf.Username + ":" + conf.Password + "@tcp(" + conf.Host + ":" + conf.Port + ")/" + conf.Dbname + "?" + "charset=utf8mb4&parseTime=True"
 }
 
 func (conf *DBConfig) PGDsn() string {
