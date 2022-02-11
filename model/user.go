@@ -104,11 +104,15 @@ func (u *User) DeleteAllInTenant(db *gorm.DB, tenantID string) error {
 }
 
 // QueryByCondition query by condition (todo fix page).
-func (u *User) QueryByCondition(db *gorm.DB, condition map[string]interface{}, page *Page) (total int64, users []*User, err error) {
+func (u *User) QueryByCondition(db *gorm.DB, condition map[string]interface{}, page *Page, keyWords string) (total int64, users []*User, err error) {
 	if condition == nil {
 		return total, nil, errors.New("query user condition is empty")
 	}
-	db = db.Model(&User{}).Where(condition).Count(&total)
+	db = db.Model(&User{})
+	if keyWords != "" {
+		db = db.Where("username like ? or nick_name like ?", "%"+keyWords+"%", "%"+keyWords+"%")
+	}
+	db = db.Where(condition).Count(&total)
 	if page != nil {
 		formatPage(db, page)
 	}

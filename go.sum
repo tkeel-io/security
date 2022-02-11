@@ -47,6 +47,8 @@ github.com/benbjohnson/clock v1.1.0 h1:Q92kusRqC1XV2MjkWETPvjJVqKetz1OzxZB7mHJLj
 github.com/benbjohnson/clock v1.1.0/go.mod h1:J11/hYXuz8f4ySSvYwY0FKfm+ezbsZBKZxNJlLklBHA=
 github.com/casbin/casbin/v2 v2.28.3 h1:iHxxEsNHwSciRoYh+54etVUA8AXKS9OKzNy6/39UWvY=
 github.com/casbin/casbin/v2 v2.28.3/go.mod h1:vByNa/Fchek0KZUgG5wEsl7iFsiviAYKRtgrQfcJqHg=
+github.com/casbin/casbin/v2 v2.41.0 h1:AHXAl/ecNz0UglkTGd6i1VZ0I9TfqPATdVNTncZfR9M=
+github.com/casbin/casbin/v2 v2.41.0/go.mod h1:sEL80qBYTbd+BPeL4iyvwYzFT3qwLaESq5aFKVLbLfA=
 github.com/casbin/xorm-adapter/v2 v2.4.0 h1:wxfbV2dowwRzJBWiZ0x2/ECQKfmyAfXJyyEMQo/Epqg=
 github.com/casbin/xorm-adapter/v2 v2.4.0/go.mod h1:AeH4dBKHC9/zYxzdPVHhPDzF8LYLqjDdb767CWJoV54=
 github.com/census-instrumentation/opencensus-proto v0.2.1/go.mod h1:f6KPmirojxKA12rnyqOA5BBL4O983OfeGPqjHWSTneU=

@@ -3,7 +3,7 @@ module github.com/tkeel-io/security
 go 1.16
 
 require (
-	github.com/casbin/casbin/v2 v2.28.3
+	github.com/casbin/casbin/v2 v2.41.0
 	github.com/casbin/xorm-adapter/v2 v2.4.0
 	github.com/coreos/go-oidc v2.2.1+incompatible
 	github.com/go-ldap/ldap v3.0.3+incompatible
