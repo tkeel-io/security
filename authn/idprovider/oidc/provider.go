@@ -29,11 +29,11 @@ import (
 	"golang.org/x/oauth2"
 )
 
-var _ idprovider.Provider = &oidcProvider{}
+var _ idprovider.Provider = &OIDCProvider{}
 
 const _oidcIdentityType string = "OIDCIdentityProvider"
 
-type oidcProvider struct {
+type OIDCProvider struct {
 	// Defines how Clients dynamically discover information about OpenID Providers
 	// See also, https://openid.net/specs/openid-connect-discovery-1_0.html#ProviderConfig
 	Issuer string `json:"issuer,omitempty" yaml:"issuer,omitempty"`
@@ -95,7 +95,7 @@ type endpoint struct {
 }
 
 // nolint
-func (o *oidcProvider) AuthenticateCode(code string) (idprovider.Identity, error) {
+func (o *OIDCProvider) AuthenticateCode(code string) (idprovider.Identity, error) {
 	ctx := context.TODO()
 	if o.InsecureSkipVerify {
 		client := &http.Client{
@@ -190,10 +190,10 @@ func (o *oidcProvider) AuthenticateCode(code string) (idprovider.Identity, error
 }
 
 //nolint
-func (o *oidcProvider) Authenticate(username string, password string) (idprovider.Identity, error) {
+func (o *OIDCProvider) Authenticate(username string, password string) (idprovider.Identity, error) {
 	return nil, errors.New("unsupported authenticate with username password")
 }
 
-func (o *oidcProvider) Type() string {
+func (o *OIDCProvider) Type() string {
 	return _oidcIdentityType
 }
