@@ -38,3 +38,9 @@ func GetIdentityProvider(key string) (Provider, error) {
 	}
 	return nil, ErrIdentityProviderNotFound
 }
+
+//nolint
+// RegisterIdentityProvider register Provider with key.
+func RegisterIdentityProvider(key string, provider Provider) {
+	_providers[key] = provider
+}
