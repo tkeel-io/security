@@ -20,6 +20,7 @@ type Provider interface {
 	AuthenticateCode(code string) (Identity, error)
 	// Authenticate basic authn username password.
 	Authenticate(username string, password string) (Identity, error)
+	AuthCodeURL(state, nonce string) string
 }
 
 type ProviderFactory interface {

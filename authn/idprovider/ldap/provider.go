@@ -70,6 +70,11 @@ type ldapProvider struct {
 	MailAttribute  string `json:"mail_attribute" yaml:"mailAttribute"`
 }
 
+func (l ldapProvider) AuthCodeURL(state, nonce string) string {
+	//TODO implement me
+	panic("implement me")
+}
+
 func (l ldapProvider) Type() string {
 	return _ldapIdentityProvider
 }
