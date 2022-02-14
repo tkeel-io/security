@@ -40,7 +40,7 @@ func (f *oidcProviderFactory) Type() string {
 
 //nolint
 func (f *oidcProviderFactory) Create(options map[string]interface{}) (idprovider.Provider, error) {
-	var oidcProvider oidcProvider
+	var oidcProvider OIDCProvider
 	if err := mapstructure.Decode(options, &oidcProvider); err != nil {
 		return nil, fmt.Errorf("mapstructure decode provider options %w", err)
 	}
