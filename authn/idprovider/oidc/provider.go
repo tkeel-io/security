@@ -75,6 +75,10 @@ type OIDCProvider struct {
 	Verifier     *oidc.IDTokenVerifier `json:"-" yaml:"-"`
 }
 
+func (o *OIDCProvider) AuthCodeURL(state, nonce string) string {
+	return o.OAuth2Config.AuthCodeURL(state, oidc.Nonce(nonce))
+}
+
 // endpoint represents an OAuth 2.0 provider's authorization and token
 // endpoint URLs.
 type endpoint struct {
