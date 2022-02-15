@@ -56,6 +56,13 @@ func (u *User) Encrypt() (err error) {
 }
 
 func (u *User) BeforeCreate(_ *gorm.DB) error {
+	if u.ID == "" {
+		usrID, err := GenUserID()
+		if err != nil {
+			return err
+		}
+		u.ID = usrID
+	}
 	return u.Encrypt()
 }
 
@@ -169,4 +176,9 @@ func AuthenticateUser(db *gorm.DB, tenantID, username, password string) (*User, 
 
 func GenUserID() (string, error) {
 	return utils.RandStringWithPrefix("usr", 14)
+}
+
+func (u *User) FirstOrAssignCreate(db *gorm.DB, where User, assign User) error {
+	result := db.Where(where).Assign(assign).FirstOrCreate(u)
+	return result.Error
 }
