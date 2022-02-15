@@ -24,11 +24,18 @@ import (
 
 const _casIdentityProvider = "CASIdentityProvider"
 
+var _ idprovider.Provider = &casProvider{}
+
 type casProvider struct {
 	RedirectURL        string `json:"redirect_url" yaml:"redirectURL"`    //nolint
 	CASServerURL       string `json:"cas_server_url" yaml:"casServerURL"` //nolint
 	InsecureSkipVerify bool   `json:"insecure_skip_verify" yaml:"insecureSkipVerify"`
 	client             *gocas.RestClient
+}
+
+func (c casProvider) AuthCodeURL(state, nonce string) string {
+	//TODO implement me
+	panic("implement me")
 }
 
 func (c casProvider) Type() string {

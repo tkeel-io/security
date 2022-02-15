@@ -46,7 +46,7 @@ func (o *Tenant) Existed(db *gorm.DB) (existed bool) {
 func (o *Tenant) List(db *gorm.DB, page *Page) (tenants []*Tenant, err error) {
 	db.Model(o)
 	if page != nil {
-		formatPage(db, page)
+		FormatPage(db, page)
 	}
 	if o.ID != "" {
 		err = db.First(o).Error
