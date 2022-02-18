@@ -14,6 +14,7 @@ limitations under the License.
 package model
 
 import (
+	"github.com/tkeel-io/security/utils"
 	"time"
 
 	"gorm.io/gorm"
@@ -32,9 +33,21 @@ func (Role) TableName() string {
 	return "sys_t_role"
 }
 
+func (dao *Role) BeforeCreate(_ *gorm.DB) error {
+	if dao.ID == "" {
+		roleID, err := GenRoleID()
+		if err != nil {
+			return err
+		}
+		dao.ID = roleID
+	}
+	return nil
+}
+
 func (dao *Role) Create(db *gorm.DB) error {
 	return db.Create(dao).Error
 }
+
 func (dao *Role) IsExisted(db *gorm.DB, where map[string]interface{}) (bool, error) {
 	roles := []Role{}
 	err := db.Where(where).Find(&roles).Error
@@ -66,4 +79,8 @@ func (dao *Role) Update(db *gorm.DB, where map[string]interface{}, updates map[s
 func (dao *Role) Delete(db *gorm.DB) (affected int64, err error) {
 	result := db.Delete(dao)
 	return result.RowsAffected, result.Error
+}
+
+func GenRoleID() (string, error) {
+	return utils.RandStringWithPrefix("role", 12)
 }
