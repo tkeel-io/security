@@ -31,7 +31,7 @@ type Page struct {
 	IsDescending bool   `json:"is_descending"` // false:ascending;true:descending
 }
 
-func FormatPage(db *gorm.DB, page *Page) {
+func FormatPage(db *gorm.DB, page *Page) *gorm.DB {
 	if page.PageNum <= 0 {
 		page.PageNum = 1
 	}
@@ -47,4 +47,5 @@ func FormatPage(db *gorm.DB, page *Page) {
 			db = db.Order(page.OrderBy)
 		}
 	}
+	return db
 }

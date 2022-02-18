@@ -121,7 +121,7 @@ func (u *User) QueryByCondition(db *gorm.DB, condition map[string]interface{}, p
 	}
 	db = db.Where(condition).Count(&total)
 	if page != nil {
-		FormatPage(db, page)
+		db = FormatPage(db, page)
 	}
 	err = db.Find(&users).Error
 	if errors.Is(err, gorm.ErrRecordNotFound) {

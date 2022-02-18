@@ -65,7 +65,7 @@ func (dao *Role) List(db *gorm.DB, where map[string]interface{}, page *Page, key
 		db = db.Where("name like ? or description like ?", "%"+keywords+"%", "%"+keywords+"%")
 	}
 	if page != nil {
-		FormatPage(db, page)
+		db = FormatPage(db, page)
 	}
 	err = db.Find(&roles).Count(&total).Error
 	return
@@ -76,8 +76,8 @@ func (dao *Role) Update(db *gorm.DB, where map[string]interface{}, updates map[s
 	return result.RowsAffected, result.Error
 }
 
-func (dao *Role) Delete(db *gorm.DB) (affected int64, err error) {
-	result := db.Delete(dao)
+func (dao *Role) Delete(db *gorm.DB, where map[string]interface{}) (affected int64, err error) {
+	result := db.Delete(dao, where)
 	return result.RowsAffected, result.Error
 }
 
