@@ -14,7 +14,6 @@ limitations under the License.
 package model
 
 import (
-	"errors"
 	"time"
 
 	"gorm.io/gorm"
@@ -43,25 +42,25 @@ func (o *Tenant) Existed(db *gorm.DB) (existed bool) {
 	return tenant.ID != ""
 }
 
-func (o *Tenant) List(db *gorm.DB, page *Page) (tenants []*Tenant, err error) {
-	db.Model(o)
+func (o *Tenant) List(db *gorm.DB, where map[string]interface{}, page *Page, keywords string) (total int64, tenants []*Tenant, err error) {
+	if where != nil {
+		db = db.Where(where)
+	}
+	if keywords != "" {
+		db = db.Where("concat (id, title, remark) like ?", "%"+keywords+"%")
+	}
 	if page != nil {
-		formatPage(db, page)
+		db = FormatPage(db, page)
 	}
-	if o.ID != "" {
-		err = db.First(o).Error
-		tenants = append(tenants, o)
-	} else if o.Title != "" {
-		err = db.Where("title LIKE ?", "%"+o.Title+"%").Find(&tenants).Error
-	} else {
-		err = db.Find(&tenants).Error
-	}
-	if errors.Is(err, gorm.ErrRecordNotFound) {
-		return nil, nil
-	}
+	err = db.Find(&tenants).Count(&total).Error
 	return
 }
 
 func (o *Tenant) Delete(db *gorm.DB) error {
 	return db.Delete(o).Error
+}
+
+func (o *Tenant) Update(db *gorm.DB, where map[string]interface{}, updates map[string]interface{}) (affected int64, err error) {
+	result := db.Table(o.TableName()).Where(where).Updates(updates)
+	return result.RowsAffected, result.Error
 }

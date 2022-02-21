@@ -56,6 +56,13 @@ func (u *User) Encrypt() (err error) {
 }
 
 func (u *User) BeforeCreate(_ *gorm.DB) error {
+	if u.ID == "" {
+		usrID, err := GenUserID()
+		if err != nil {
+			return err
+		}
+		u.ID = usrID
+	}
 	return u.Encrypt()
 }
 
@@ -114,7 +121,7 @@ func (u *User) QueryByCondition(db *gorm.DB, condition map[string]interface{}, p
 	}
 	db = db.Where(condition).Count(&total)
 	if page != nil {
-		formatPage(db, page)
+		db = FormatPage(db, page)
 	}
 	err = db.Find(&users).Error
 	if errors.Is(err, gorm.ErrRecordNotFound) {
@@ -123,7 +130,7 @@ func (u *User) QueryByCondition(db *gorm.DB, condition map[string]interface{}, p
 	return
 }
 func (u *User) Update(db *gorm.DB, tenantID, userID string, updates map[string]interface{}) error {
-	return db.Model(u).Where("id = ? and tenant_id = ?", userID, tenantID).UpdateColumns(updates).Error
+	return db.Table(u.TableName()).Where("id = ? and tenant_id = ?", userID, tenantID).Updates(updates).Error
 }
 
 func MappingFromExternal(db *gorm.DB, externalID, name, email, tenantID string) (*User, error) {
@@ -169,4 +176,9 @@ func AuthenticateUser(db *gorm.DB, tenantID, username, password string) (*User, 
 
 func GenUserID() (string, error) {
 	return utils.RandStringWithPrefix("usr", 14)
+}
+
+func (u *User) FirstOrAssignCreate(db *gorm.DB, where User, assign User) error {
+	result := db.Where(where).Assign(assign).FirstOrCreate(u)
+	return result.Error
 }

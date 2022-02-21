@@ -31,17 +31,21 @@ type Page struct {
 	IsDescending bool   `json:"is_descending"` // false:ascending;true:descending
 }
 
-func formatPage(db *gorm.DB, page *Page) {
-	if page.PageSize == 0 {
-		page.PageSize = DefaultPageNum
+func FormatPage(db *gorm.DB, page *Page) *gorm.DB {
+	if page.PageNum <= 0 {
+		page.PageNum = 1
 	}
-	db.Offset((page.PageNum - 1) * page.PageSize).Limit(page.PageSize)
+	if page.PageSize > 0 {
+		db = db.Offset((page.PageNum - 1) * page.PageSize).Limit(page.PageSize)
+	}
+
 	if page.OrderBy != "" {
 		if page.IsDescending {
 			desc := fmt.Sprintf("%s desc", page.OrderBy)
-			db.Order(desc)
+			db = db.Order(desc)
 		} else {
-			db.Order(page.OrderBy)
+			db = db.Order(page.OrderBy)
 		}
 	}
+	return db
 }
