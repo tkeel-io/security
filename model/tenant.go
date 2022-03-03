@@ -49,10 +49,11 @@ func (o *Tenant) List(db *gorm.DB, where map[string]interface{}, page *Page, key
 	if keywords != "" {
 		db = db.Where("concat (id, title, remark) like ?", "%"+keywords+"%")
 	}
+	db = db.Table(o.TableName()).Count(&total)
 	if page != nil {
 		db = FormatPage(db, page)
 	}
-	err = db.Find(&tenants).Count(&total).Error
+	err = db.Find(&tenants).Error
 	return
 }
 
