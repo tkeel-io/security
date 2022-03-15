@@ -21,6 +21,7 @@ import (
 	"fmt"
 	"io/ioutil"
 	"net/http"
+	"time"
 
 	"github.com/tkeel-io/security/authn/idprovider"
 
@@ -100,7 +101,8 @@ type endpoint struct {
 
 // nolint
 func (o *OIDCProvider) AuthenticateCode(code string) (idprovider.Identity, error) {
-	ctx := context.TODO()
+	ctx, cancel := context.WithTimeout(context.TODO(), time.Minute)
+	defer cancel()
 	if o.InsecureSkipVerify {
 		client := &http.Client{
 			Transport: &http.Transport{
@@ -133,9 +135,9 @@ func (o *OIDCProvider) AuthenticateCode(code string) (idprovider.Identity, error
 		if err != nil {
 			return nil, fmt.Errorf("failed to decode id token claims: %w", err)
 		}
-		if err := claims.Valid(); err != nil {
-			return nil, fmt.Errorf("failed to verify id token: %w", err)
-		}
+		//if err := claims.Valid(); err != nil {
+		//	return nil, fmt.Errorf("failed to verify id token: %w", err)
+		//}
 	}
 	if o.GetUserInfo {
 		if o.Provider != nil {
