@@ -43,13 +43,14 @@ func (o *Tenant) Existed(db *gorm.DB) (existed bool) {
 }
 
 func (o *Tenant) List(db *gorm.DB, where map[string]interface{}, page *Page, keywords string) (total int64, tenants []*Tenant, err error) {
+	db = db.Model(o)
 	if where != nil {
 		db = db.Where(where)
 	}
 	if keywords != "" {
 		db = db.Where("concat (id, title, remark) like ?", "%"+keywords+"%")
 	}
-	db = db.Table(o.TableName()).Count(&total)
+	db = db.Count(&total)
 	if page != nil {
 		db = FormatPage(db, page)
 	}

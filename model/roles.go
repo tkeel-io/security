@@ -58,16 +58,18 @@ func (dao *Role) IsExisted(db *gorm.DB, where map[string]interface{}) (bool, err
 }
 
 func (dao *Role) List(db *gorm.DB, where map[string]interface{}, page *Page, keywords string) (total int64, roles []*Role, err error) {
+	db = db.Model(dao)
 	if where != nil {
 		db = db.Where(where)
 	}
 	if keywords != "" {
 		db = db.Where("name like ? or description like ?", "%"+keywords+"%", "%"+keywords+"%")
 	}
+	db = db.Count(&total)
 	if page != nil {
 		db = FormatPage(db, page)
 	}
-	err = db.Find(&roles).Count(&total).Error
+	err = db.Find(&roles).Error
 	return
 }
 
